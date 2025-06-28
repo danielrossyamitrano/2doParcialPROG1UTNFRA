@@ -8,4 +8,3 @@ lista
 función
 argumento
 booleano
-sintaxis
