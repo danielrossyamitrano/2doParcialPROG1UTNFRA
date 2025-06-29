@@ -10,7 +10,7 @@
 # - El código debe estar comentado línea por línea.
 # - Solo las partes del cuerpo deben contar como errores, no el soporte del ahorcado.
 
-from pygame import SRCALPHA, init as pg_init, display, font, Surface, event, quit as pg_quit, time
+from pygame import SRCALPHA, init as pg_init, display, font, Surface, event, quit as pg_quit, time, image
 from pygame.locals import *
 from random import choice
 from sys import exit
@@ -23,7 +23,10 @@ pg_init()
 ANCHO, ALTO = 800, 600
 VENTANA = display.set_mode((ANCHO, ALTO))
 #completar con nombre del equipo
-display.set_caption("Juego del Ahorcado by El DREAM TEAM")
+display.set_caption("Ahorcado 💀 by EL DREAM TEAM ⭐")
+icono = image.load("") # Agregar imagen para el icono del juego
+display.set_icon(icono)
+
 FPS = time.Clock()
 
 # ----------------- COLORES  se pueden modificar por los que elija el equipo-----------------
