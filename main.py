@@ -10,15 +10,12 @@
 # - El código debe estar comentado línea por línea.
 # - Solo las partes del cuerpo deben contar como errores, no el soporte del ahorcado.
 
-from pygame import SRCALPHA, init as pg_init, display, font, Surface
+from pygame import SRCALPHA, init as pg_init, display, font, Surface, event, quit as pg_quit, time
+from pygame.locals import *
 from random import choice
-
-# from funciones import abrir_txt
-# from os import path, getcwd
-
-# ruta = path.join(getcwd(), 'data', 'palabras_astronomia.txt')
-# lineas = abrir_txt(ruta)
-
+from sys import exit
+from funciones import abrir_txt as cargar_palabras
+from os import path, getcwd
 
 pg_init()
 
@@ -27,6 +24,7 @@ ANCHO, ALTO = 800, 600
 VENTANA = display.set_mode((ANCHO, ALTO))
 #completar con nombre del equipo
 display.set_caption("Juego del Ahorcado by El DREAM TEAM")
+FPS = time.Clock()
 
 # ----------------- COLORES  se pueden modificar por los que elija el equipo-----------------
 BLANCO = (255, 255, 255)
@@ -71,7 +69,7 @@ def dibujar_estructura():
 # Joaco: Decidamos si vamos a hacer que se acerque cada vez mas a la olla o lo que sea (baje la cuerda)
 # o le agregamos partes del cuerpo como cualquier ahorcado
 def dibujar_cuerpo(errores):
-    cuerpo_personaje = Surface((200, 200), SRCALPHA) # Crear superficie para el cuerpo del personaje
+    cuerpo_personaje = Surface((200, 200), SRCALPHA)  # Crear superficie para el cuerpo del personaje
     # Dibujar cabeza, tronco, brazos y piernas en base a la cantidad de errores
     return cuerpo_personaje
 
@@ -101,7 +99,6 @@ def verificar_letra(letra: str, palabra: str, letras_adivinadas: list, letras_in
         return letras_adivinadas, letras_incorrectas
 
     # Si la letra esta en la palabra la agregamos a letras_adivinadas
-    letras_incorrectas = []
     if letra in palabra:
         print(f"La Letra '{letra}' se encuentra en la palabra.")
         # AGREGAR SONIDO DE CELEBRACION
@@ -122,26 +119,61 @@ def agregar_letra(letra: str, palabra: str):
 
 # ----------------- SONIDO -----------------
 # pygame.mixer.init()  # Inicializa el motor de sonido
-# sonido_error = pygame.mixer.Sound("error.wav")  # Asegurate de tener este archivo
-# sonido_acierto = pygame.mixer.Sound("")  # Mati hace magia y agrega el sonido de acierto
+# sonido_error = pygame.mixer.Sound("error.wav")  # Asegurate de tener este archivo sonido_acierto = pygame.mixer.Sound("")  # Mati hace magia y agrega el sonido de acierto
 
 # ----------------- BUCLE PRINCIPAL -----------------
 def jugar():
     # 1. Cargar palabras desde archivo y elegir una al azar
+    palabras = cargar_palabras(path.join(getcwd(), 'data', 'palabras_programacion.txt'))
+    elegida = choice(palabras)
+    espacios = len(elegida)
     # 2. Inicializar estructuras necesarias: letras_adivinadas, errores, reloj, banderas
-    # 3. Crear un bucle while que termine al cerrar el juego o al ganar/perder
-    # 4. Dentro del bucle:
-    #     - Capturar eventos (teclas)
-    #     - Verificar letras
-    #     - Incrementar errores si corresponde
-    #     - Dibujar estado del juego en pantalla
-    #     - Verificar condiciones de fin (victoria o derrota)
-    #     - Actualizar pantalla
-    #     - Controlar FPS
+    adivinadas = []
+    incorrectas = []
+    errores = 0
 
-    # Instrucción: este bloque debe ser completado por el estudiante según las consignas
-    pass
+    for pair in ('í', 'i'), ('ó', 'o'), ('á', 'a'), ('ú', 'u'), ('é', 'e'):
+        # reemplaza las vocales con tílde porque en Pygame esos son dos teclas y requeriría un parser.
+        actual_word = elegida.replace(*pair)
 
+    # esto es porque al adivinar una letra se ocuan todos los epsacios que tienen la misma letra. Ademas, case sensitive
+    actual_word = actual_word.replace('rr', 'r').replace('cc', 'c').replace('ll', 'l').lower()
+    corriendo = True
+
+    while corriendo:
+        FPS.tick(60)  # 4.g- Controlar FPS
+        # 3. Crear un bucle while que termine al cerrar el juego o al ganar/perder
+        for e in event.get([KEYDOWN, QUIT]):  #4.a- Capturar eventos (teclas)
+            if (e.type == KEYDOWN and e.key == K_ESCAPE) or e.type == QUIT:
+                pg_quit()
+                exit()
+            elif KEYDOWN:
+                letra = e.unicode
+                if len(letra) == 1 and letra.isalpha():  # 4.b- Verificar letras
+                    adivinadas, incorrectas = verificar_letra(letra, actual_word, adivinadas, incorrectas)
+                    # 4.e- Verificar condiciones de fin (victoria o derrota)
+                    if len(incorrectas) >= espacios:
+                        print('Perdiste')
+                        corriendo = False
+
+                    elif adivinadas == espacios:
+                        print('Ganaste')
+                        corriendo = False
+
+                    # 4.d- Dibujar estado del juego en pantalla
+                    elif agregar_letra(letra, actual_word):
+                        # dibujar la letra en todos los espacios que correspondan
+                        pass
+
+                    else:
+                        # dibujar una parte del hangman
+                        errores += 1  # 4.c- Incrementar errores si corresponde
+
+        # 4.f- Actualizar pantalla
+        display.update()
+
+
+# Instrucción: este bloque debe ser completado por el estudiante según las consignas
 # No ejecutar el juego automáticamente: solo se invoca desde consola o importación
 # Descomentar la línea siguiente para probar el juego terminado:
-# jugar()
+jugar()
