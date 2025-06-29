@@ -11,16 +11,22 @@
 # - Solo las partes del cuerpo deben contar como errores, no el soporte del ahorcado.
 
 import pygame
-import random
+from random import choice
+
+# from funciones import abrir_txt
+# from os import path, getcwd
+
+# ruta = path.join(getcwd(), 'data', 'palabras_astronomia.txt')
+# lineas = abrir_txt(ruta)
+
 
 pygame.init()
 
 # ----------------- CONFIGURACIÓN DE PANTALLA -----------------
-ANCHO = 800
-ALTO = 600
+ANCHO, ALTO = 800, 600
 VENTANA = pygame.display.set_mode((ANCHO, ALTO))
 #completar con nombre del equipo
-pygame.display.set_caption("Juego del Ahorcado")
+pygame.display.set_caption("Juego del Ahorcado by El DREAM TEAM")
 
 # ----------------- COLORES  se pueden modificar por los que elija el equipo-----------------
 BLANCO = (255, 255, 255)
@@ -30,45 +36,64 @@ ROJO = (255, 0, 0)
 # ----------------- FUENTE -----------------
 FUENTE = pygame.font.SysFont(None, 48)
 
+
 #-------------------Modelo de funciones, se deberan realizar en un archivo aparte
 # Las funciones del personaje deben ser creadas y completadas por el equipo en un archivo aparte
 # -------------------
 
 # ----------------- CARGAR PALABRAS DESDE ARCHIVO -----------------
-def cargar_palabras():
-    # Leer las palabras desde un archivo de texto y devolver una lista
-    # Asegurate de tener un archivo llamado palabras.txt con una palabra por línea
-    pass
+# def cargar_palabras():
+#     # Leer las palabras desde un archivo de texto y devolver una lista
+#     # Asegurate de tener un archivo llamado palabras.txt con una palabra por línea
+#     pass
+
+#IMPLEMENTADO: función funciones/util.abrir_txt()
+#AUTOR: Daniel Rossy Amitrano
+
 
 # ----------------- ELEGIR PALABRA AL AZAR -----------------
 def elegir_palabra(lista_palabras):
     # Elegir una palabra aleatoria de la lista y convertirla a mayúsculas
-    pass
+    chosen = choice(lista_palabras)
+    return chosen.upper()
+
 
 # ----------------- DIBUJAR ESTRUCTURA DEL AHORCADO -----------------
 def dibujar_estructura():
     # Dibuja la base, palo y cuerda del ahorcado (no cuenta como error)
     pass
 
+
 # ----------------- DIBUJAR PARTES DEL CUERPO -----------------
 def dibujar_cuerpo(errores):
     # Dibujar cabeza, tronco, brazos y piernas en base a la cantidad de errores
     pass
+
 
 # ----------------- DIBUJAR JUEGO EN PANTALLA -----------------
 def dibujar_juego(palabra, letras_adivinadas, errores):
     # Llenar fondo, mostrar palabra oculta, letras ingresadas y dibujar estructura y cuerpo
     pass
 
+
 # ----------------- VERIFICAR LETRA -----------------
-def verificar_letra(letra, palabra, letras_adivinadas):
+#Desglocé la función en dos porque me parecía que tenía dos return values diferentes.
+
+def verificar_letra(letra: str, letras_adivinadas: list):
     # Agregar la letra a letras_adivinadas si no estaba
+    if letra not in letras_adivinadas:
+        letras_adivinadas.append(letra)
+    return letras_adivinadas
+
+
+def agregar_letra(letra: str, palabra: str):
     # Retornar True si la letra está en la palabra, False si no
-    pass
+    return letra in palabra
+
 
 # ----------------- SONIDO -----------------
-pygame.mixer.init()  # Inicializa el motor de sonido
-sonido_error = pygame.mixer.Sound("error.wav")  # Asegurate de tener este archivo
+# pygame.mixer.init()  # Inicializa el motor de sonido
+# sonido_error = pygame.mixer.Sound("error.wav")  # Asegurate de tener este archivo
 
 # ----------------- BUCLE PRINCIPAL -----------------
 def jugar():
