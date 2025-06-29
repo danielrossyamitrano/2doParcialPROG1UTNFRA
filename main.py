@@ -10,7 +10,7 @@
 # - El código debe estar comentado línea por línea.
 # - Solo las partes del cuerpo deben contar como errores, no el soporte del ahorcado.
 
-import pygame
+from pygame import SRCALPHA, init as pg_init, display, font, Surface
 from random import choice
 
 # from funciones import abrir_txt
@@ -20,21 +20,22 @@ from random import choice
 # lineas = abrir_txt(ruta)
 
 
-pygame.init()
+pg_init()
 
 # ----------------- CONFIGURACIÓN DE PANTALLA -----------------
 ANCHO, ALTO = 800, 600
-VENTANA = pygame.display.set_mode((ANCHO, ALTO))
+VENTANA = display.set_mode((ANCHO, ALTO))
 #completar con nombre del equipo
-pygame.display.set_caption("Juego del Ahorcado by El DREAM TEAM")
+display.set_caption("Juego del Ahorcado by El DREAM TEAM")
 
 # ----------------- COLORES  se pueden modificar por los que elija el equipo-----------------
 BLANCO = (255, 255, 255)
 NEGRO = (0, 0, 0)
 ROJO = (255, 0, 0)
+VERDE = (0, 255, 0)
 
 # ----------------- FUENTE -----------------
-FUENTE = pygame.font.SysFont(None, 48)
+FUENTE = font.SysFont(None, 48)
 
 
 #-------------------Modelo de funciones, se deberan realizar en un archivo aparte
@@ -59,15 +60,19 @@ def elegir_palabra(lista_palabras):
 
 
 # ----------------- DIBUJAR ESTRUCTURA DEL AHORCADO -----------------
+# Joaco: No se que tanto utilizemos esta funcion, si pensabamos dibujar la estructura como parte del fondo
 def dibujar_estructura():
     # Dibuja la base, palo y cuerda del ahorcado (no cuenta como error)
     pass
 
 
 # ----------------- DIBUJAR PARTES DEL CUERPO -----------------
+
+# Joaco: Decidamos si vamos a hacer que se acerque cada vez mas a la olla o lo que sea (baje la cuerda) o le agregamos partes del cuerpo como cualquier ahorcado
 def dibujar_cuerpo(errores):
+    cuerpo_personaje = Surface((200, 200), SRCALPHA) # Crear superficie para el cuerpo del personaje
     # Dibujar cabeza, tronco, brazos y piernas en base a la cantidad de errores
-    pass
+    return cuerpo_personaje
 
 
 # ----------------- DIBUJAR JUEGO EN PANTALLA -----------------
@@ -77,13 +82,34 @@ def dibujar_juego(palabra, letras_adivinadas, errores):
 
 
 # ----------------- VERIFICAR LETRA -----------------
-#Desglocé la función en dos porque me parecía que tenía dos return values diferentes.
+#Desglocé la función en dos porque me parecía que tenía dos return values diferentes. (dani)
+# Joaco: Me parecio mejor que tambien se muestre la lista de letras ya utilizadas, sobretodo las erradas, arme otra lista para eso
+
 
 def verificar_letra(letra: str, letras_adivinadas: list):
     # Agregar la letra a letras_adivinadas si no estaba
     if letra not in letras_adivinadas:
         letras_adivinadas.append(letra)
     return letras_adivinadas
+
+# def verificar_letra(letra: str, palabra: str, letras_adivinadas: list, letras_incorrectas: list):
+#     # Verifica que la letra no fue utilizada antes
+#     if letra in letras_adivinadas or letra in letras_incorrectas:
+#       print(f"La letra '{letra}' ya fue utilizada. Intente con otra.")
+#         return letras_adivinadas, letras_incorrectas
+
+#     # Si la letra esta en la palabra la agregamos a letras_adivinadas
+#     if letra in palabra:
+#         print(f"La Letra '{letra}' se encuentra en la palabra.")
+#         AGREGAR SONIDO DE CELEBRACION
+#         letras_adivinadas.append(letra)
+#     else:
+#         # Si la letra no está en la palabra, la agregamos a letras_incorrectas
+#         print(f"La letra '{letra}' no se encuentra en la palabra.")
+#         AGREGAR SONIDO DE ERROR
+#         letras_incorrectas.append(letra)
+
+#     return letras_adivinadas, letras_incorrectas
 
 
 def agregar_letra(letra: str, palabra: str):
@@ -94,6 +120,7 @@ def agregar_letra(letra: str, palabra: str):
 # ----------------- SONIDO -----------------
 # pygame.mixer.init()  # Inicializa el motor de sonido
 # sonido_error = pygame.mixer.Sound("error.wav")  # Asegurate de tener este archivo
+# sonido_acierto = pygame.mixer.Sound("")  # Mati hace magia y agrega el sonido de acierto
 
 # ----------------- BUCLE PRINCIPAL -----------------
 def jugar():
