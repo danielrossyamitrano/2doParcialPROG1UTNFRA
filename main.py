@@ -68,7 +68,8 @@ def dibujar_estructura():
 
 # ----------------- DIBUJAR PARTES DEL CUERPO -----------------
 
-# Joaco: Decidamos si vamos a hacer que se acerque cada vez mas a la olla o lo que sea (baje la cuerda) o le agregamos partes del cuerpo como cualquier ahorcado
+# Joaco: Decidamos si vamos a hacer que se acerque cada vez mas a la olla o lo que sea (baje la cuerda)
+# o le agregamos partes del cuerpo como cualquier ahorcado
 def dibujar_cuerpo(errores):
     cuerpo_personaje = Surface((200, 200), SRCALPHA) # Crear superficie para el cuerpo del personaje
     # Dibujar cabeza, tronco, brazos y piernas en base a la cantidad de errores
@@ -83,33 +84,35 @@ def dibujar_juego(palabra, letras_adivinadas, errores):
 
 # ----------------- VERIFICAR LETRA -----------------
 #Desglocé la función en dos porque me parecía que tenía dos return values diferentes. (dani)
-# Joaco: Me parecio mejor que tambien se muestre la lista de letras ya utilizadas, sobretodo las erradas, arme otra lista para eso
+# Joaco: Me parecio mejor que tambien se muestre la lista de letras ya utilizadas,
+# sobretodo las erradas, arme otra lista para eso
 
 
-def verificar_letra(letra: str, letras_adivinadas: list):
-    # Agregar la letra a letras_adivinadas si no estaba
-    if letra not in letras_adivinadas:
-        letras_adivinadas.append(letra)
-    return letras_adivinadas
-
-# def verificar_letra(letra: str, palabra: str, letras_adivinadas: list, letras_incorrectas: list):
-#     # Verifica que la letra no fue utilizada antes
-#     if letra in letras_adivinadas or letra in letras_incorrectas:
-#       print(f"La letra '{letra}' ya fue utilizada. Intente con otra.")
-#         return letras_adivinadas, letras_incorrectas
-
-#     # Si la letra esta en la palabra la agregamos a letras_adivinadas
-#     if letra in palabra:
-#         print(f"La Letra '{letra}' se encuentra en la palabra.")
-#         AGREGAR SONIDO DE CELEBRACION
+# def verificar_letra(letra: str, letras_adivinadas: list):
+#     # Agregar la letra a letras_adivinadas si no estaba
+#     if letra not in letras_adivinadas:
 #         letras_adivinadas.append(letra)
-#     else:
-#         # Si la letra no está en la palabra, la agregamos a letras_incorrectas
-#         print(f"La letra '{letra}' no se encuentra en la palabra.")
-#         AGREGAR SONIDO DE ERROR
-#         letras_incorrectas.append(letra)
+#     return letras_adivinadas
 
-#     return letras_adivinadas, letras_incorrectas
+def verificar_letra(letra: str, palabra: str, letras_adivinadas: list, letras_incorrectas: list):
+    # Verifica que la letra no fue utilizada antes
+    if letra in letras_adivinadas or letra in letras_incorrectas:
+        print(f"La letra '{letra}' ya fue utilizada. Intente con otra.")
+        return letras_adivinadas, letras_incorrectas
+
+    # Si la letra esta en la palabra la agregamos a letras_adivinadas
+    letras_incorrectas = []
+    if letra in palabra:
+        print(f"La Letra '{letra}' se encuentra en la palabra.")
+        # AGREGAR SONIDO DE CELEBRACION
+        letras_adivinadas.append(letra)
+    else:
+        # Si la letra no está en la palabra, la agregamos a letras_incorrectas
+        print(f"La letra '{letra}' no se encuentra en la palabra.")
+        #AGREGAR SONIDO DE ERROR
+        letras_incorrectas.append(letra)
+
+    return letras_adivinadas, letras_incorrectas
 
 
 def agregar_letra(letra: str, palabra: str):
