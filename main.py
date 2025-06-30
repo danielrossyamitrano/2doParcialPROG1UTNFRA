@@ -10,7 +10,7 @@
 # - El código debe estar comentado línea por línea.
 # - Solo las partes del cuerpo deben contar como errores, no el soporte del ahorcado.
 
-from pygame import SRCALPHA, init as pg_init, display, font, Surface, event, quit as pg_quit, time, draw
+from pygame import SRCALPHA, init as pg_init, display, font, Surface, event, quit as pg_quit, time, draw, transform
 from funciones import abrir_txt as cargar_palabras, cargar_imagen
 from pygame.locals import *
 from os import path, getcwd
@@ -30,7 +30,7 @@ display.set_icon(icono)
 FPS = time.Clock()
 
 # ----------------- COLORES  se pueden modificar por los que elija el equipo-----------------
-BLANCO = (255, 255, 255)
+BLANCO = (255, 255, 255, 100)
 NEGRO = (0, 0, 0)
 ROJO = (255, 0, 0)
 VERDE = (0, 255, 0)
@@ -79,15 +79,15 @@ def dibujar_cuerpo(errores):
 # ----------------- DIBUJAR JUEGO EN PANTALLA -----------------
 def dibujar_juego(palabra, letras_adivinadas, errores):
     # Llenar fondo, mostrar palabra oculta, letras ingresadas y dibujar estructura y cuerpo
-    
     pass
 
 def dibujar_lineas(pantalla, palabra_elegida: str):
-    fondo_palabra = Surface((700, 150))  # Crear superficie para enmarcar la palabra y no sobrepase esos limites
+    fondo_palabra = Surface((700, 150), SRCALPHA)
+    # Crear superficie para enmarcar la palabra y no sobrepase esos limites
     fondo_palabra.fill(BLANCO)  # Color de fondo blanco para probar
     for i in range(len(palabra_elegida)):
         x_inicio = 20 + i * 50
-        draw.line(fondo_palabra, (NEGRO), (x_inicio, 100), (x_inicio + 30, 100), 2)
+        draw.line(fondo_palabra, NEGRO, (x_inicio, 100), (x_inicio + 30, 100), 2)
     pantalla.blit(fondo_palabra, (50,400))
     return fondo_palabra
 
@@ -138,6 +138,10 @@ def agregar_letra(letra: str, palabra: str):
 
 # ----------------- BUCLE PRINCIPAL -----------------
 def jugar():
+    fondo = cargar_imagen('FondoFinal.png')
+    fondo_escalado = transform.scale(fondo,[800,600])
+    VENTANA.blit(fondo_escalado,(0, 0))
+
     # 1. Cargar palabras desde archivo y elegir una al azar
     palabras = cargar_palabras(path.join(getcwd(), 'data', 'palabras_programacion.txt'))
     elegida = choice(palabras)
@@ -154,7 +158,7 @@ def jugar():
     # esto es porque al adivinar una letra se ocuan todos los epsacios que tienen la misma letra. Ademas, case sensitive
     actual_word = actual_word.replace('rr', 'r').replace('cc', 'c').replace('ll', 'l').lower()
     corriendo = True
-    dibujar_lineas(VENTANA,elegida)
+    dibujar_lineas(VENTANA, elegida)
     while corriendo:
         FPS.tick(60) # 4.g- Controlar FPS
         # 3. Crear un bucle while que termine al cerrar el juego o al ganar/perder
