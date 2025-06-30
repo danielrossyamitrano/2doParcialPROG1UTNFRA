@@ -24,8 +24,10 @@ ANCHO, ALTO = 800, 600
 VENTANA = display.set_mode((ANCHO, ALTO))
 #completar con nombre del equipo
 display.set_caption("Ahorcado 💀 by EL DREAM TEAM ⭐")
-icono = image.load("") # Agregar imagen para el icono del juego
-display.set_icon(icono)
+
+# comentado porque crashea el código si está vacío. Daniel.
+# icono = image.load("") # Agregar imagen para el icono del juego
+# display.set_icon(icono)
 
 FPS = time.Clock()
 
