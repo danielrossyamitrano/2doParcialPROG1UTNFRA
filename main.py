@@ -11,7 +11,7 @@
 # - Solo las partes del cuerpo deben contar como errores, no el soporte del ahorcado.
 
 from pygame import SRCALPHA, init as pg_init, display, font, Surface, event, quit as pg_quit, time, draw, transform
-from funciones import abrir_txt as cargar_palabras, cargar_imagen
+from funciones import abrir_txt as cargar_palabras, cargar_imagen, cargar_musica
 from pygame.locals import *
 from os import path, getcwd
 from random import choice
@@ -160,6 +160,8 @@ def jugar():
     fondo = cargar_imagen('FondoFinal.png')
     fondo_escalado = transform.scale(fondo,[800,600])
     VENTANA.blit(fondo_escalado,(0, 0))
+
+    cargar_musica('MusicaFondo.wav')
 
     # 1. Cargar palabras desde archivo y elegir una al azar
     palabras = cargar_palabras(path.join(getcwd(), 'data', 'palabras_programacion.txt'))

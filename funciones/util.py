@@ -1,4 +1,5 @@
-from pygame import image
+from pygame import image, mixer
+from pygame.mixer import music
 from os import path, getcwd
 
 def abrir_txt(filepath):
@@ -11,3 +12,10 @@ def cargar_imagen(filename):
     if path.exists(filepath):
         imagen = image.load(filepath).convert_alpha()
         return imagen
+
+def cargar_musica(filename):
+    mixer.init()
+    filepath = path.join(getcwd(), 'data', 'musica', filename)
+    if path.exists(filepath):
+        music.load(filepath)
+    music.play(-1)
