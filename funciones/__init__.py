@@ -1,1 +1,1 @@
-from .util import abrir_txt
+from .util import *

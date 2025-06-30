@@ -11,11 +11,11 @@
 # - Solo las partes del cuerpo deben contar como errores, no el soporte del ahorcado.
 
 from pygame import SRCALPHA, init as pg_init, display, font, Surface, event, quit as pg_quit, time, draw
+from funciones import abrir_txt as cargar_palabras, cargar_imagen
 from pygame.locals import *
+from os import path, getcwd
 from random import choice
 from sys import exit
-from funciones import abrir_txt as cargar_palabras
-from os import path, getcwd
 
 pg_init()
 
