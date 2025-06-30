@@ -1,12 +1,13 @@
 from pygame import image
-from os import path
+from os import path, getcwd
 
 def abrir_txt(filepath):
     with open(filepath, 'rt', encoding='utf-8') as file:
         lineas = [line.rstrip('\n') for line in file.readlines()]
     return lineas
 
-def cargar_imagen(ruta):
-    if path.exists(ruta):
-        imagen = image.load(ruta).convert_alpha()
+def cargar_imagen(filename):
+    filepath = path.join(getcwd(), 'data', 'imagenes',filename)
+    if path.exists(filepath):
+        imagen = image.load(filepath).convert_alpha()
         return imagen

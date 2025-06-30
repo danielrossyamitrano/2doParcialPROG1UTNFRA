@@ -23,8 +23,8 @@ pg_init()
 ANCHO, ALTO = 800, 600
 VENTANA = display.set_mode((ANCHO, ALTO))
 
-display.set_caption("Ahorcado 💀 by EL DREAM TEAM ⭐") # Nombre del juego
-icono = image.load("data\gaturro.png") # Icono del juego
+display.set_caption("Ahorcado 💀 by EL DREAM TEAM ⭐")  # Nombre del juego
+icono = cargar_imagen("gaturro.png")  # Icono del juego
 display.set_icon(icono)
 
 FPS = time.Clock()
