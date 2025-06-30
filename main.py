@@ -10,7 +10,7 @@
 # - El código debe estar comentado línea por línea.
 # - Solo las partes del cuerpo deben contar como errores, no el soporte del ahorcado.
 
-from pygame import SRCALPHA, init as pg_init, display, font, Surface, event, quit as pg_quit, time, image
+from pygame import SRCALPHA, init as pg_init, display, font, Surface, event, quit as pg_quit, time, image, draw
 from pygame.locals import *
 from random import choice
 from sys import exit
@@ -82,7 +82,14 @@ def dibujar_cuerpo(errores):
 # ----------------- DIBUJAR JUEGO EN PANTALLA -----------------
 def dibujar_juego(palabra, letras_adivinadas, errores):
     # Llenar fondo, mostrar palabra oculta, letras ingresadas y dibujar estructura y cuerpo
+    
     pass
+
+def dibujar_lineas(pantalla, palabra_elegida: str):
+    fondo_palabra = Surface((550, 200))  # Crear superficie para enmarcar la palabra y no sobrepase esos limites
+    fondo_palabra.fill(255, 255, 255)  # Color de fondo blanco para probar
+    for i in range(len(palabra_elegida)):
+        draw.line(pantalla, (0, 0, 0), (50, 50 + i * 50), (100, 50 + i * 50), 2)
 
 
 # ----------------- VERIFICAR LETRA -----------------
@@ -146,12 +153,14 @@ def jugar():
     corriendo = True
 
     while corriendo:
-        FPS.tick(60)  # 4.g- Controlar FPS
+        FPS.tick(60) # 4.g- Controlar FPS
         # 3. Crear un bucle while que termine al cerrar el juego o al ganar/perder
         for e in event.get([KEYDOWN, QUIT]):  #4.a- Capturar eventos (teclas)
             if (e.type == KEYDOWN and e.key == K_ESCAPE) or e.type == QUIT:
                 pg_quit()
                 exit()
+            # imprimir las lineas de la palabra a adivinar
+            
             elif KEYDOWN:
                 letra = e.unicode
                 if len(letra) == 1 and letra.isalpha():  # 4.b- Verificar letras
