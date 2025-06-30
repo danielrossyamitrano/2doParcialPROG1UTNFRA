@@ -30,8 +30,9 @@ display.set_icon(icono)
 FPS = time.Clock()
 
 # ----------------- COLORES  se pueden modificar por los que elija el equipo-----------------
-BLANCO = (255, 255, 255, 100)
+BLANCO = (255, 255, 255)
 NEGRO = (0, 0, 0)
+NEGRO_TRANSPARENTE = (0, 0, 0, 0)  # Color
 ROJO = (255, 0, 0)
 VERDE = (0, 255, 0)
 
@@ -81,16 +82,34 @@ def dibujar_juego(palabra, letras_adivinadas, errores):
     # Llenar fondo, mostrar palabra oculta, letras ingresadas y dibujar estructura y cuerpo
     pass
 
+# def dibujar_lineas(pantalla, palabra_elegida: str):
+#     fondo_palabra = Surface((740, 150), SRCALPHA)
+#     # Crear superficie para enmarcar la palabra y no sobrepase esos limites
+#     fondo_palabra.fill(NEGRO_TRANSPARENTE)  # Color de fondo blanco para probar
+#     for i in range(len(palabra_elegida)):
+#         x_inicio = 20 + i * 50
+#         draw.line(fondo_palabra, BLANCO, (x_inicio, 100), (x_inicio + 30, 100), 2)
+#     pantalla.blit(fondo_palabra, (30,440))
+    
 def dibujar_lineas(pantalla, palabra_elegida: str):
-    fondo_palabra = Surface((700, 150), SRCALPHA)
-    # Crear superficie para enmarcar la palabra y no sobrepase esos limites
-    fondo_palabra.fill(BLANCO)  # Color de fondo blanco para probar
-    for i in range(len(palabra_elegida)):
-        x_inicio = 20 + i * 50
-        draw.line(fondo_palabra, NEGRO, (x_inicio, 100), (x_inicio + 30, 100), 2)
-    pantalla.blit(fondo_palabra, (50,400))
-    return fondo_palabra
+    fondo_palabra = Surface((740, 150), SRCALPHA)
+    fondo_palabra.fill(NEGRO_TRANSPARENTE)
 
+    cantidad_letras = len(palabra_elegida)
+    espacio_entre_lineas = 60
+    largo_linea = 40
+
+    # Ancho total ocupado por todas las líneas
+    ancho_total = cantidad_letras * espacio_entre_lineas
+
+    # Calcular el punto de inicio en X para centrar
+    x_inicio = (fondo_palabra.get_width() - ancho_total) // 2
+
+    for i in range(cantidad_letras):
+        x = x_inicio + i * espacio_entre_lineas
+        draw.line(fondo_palabra, BLANCO, (x, 100), (x + largo_linea, 100), 4)
+
+    pantalla.blit(fondo_palabra, (30, 440))  # Posición en pantalla
 
 # ----------------- VERIFICAR LETRA -----------------
 #Desglocé la función en dos porque me parecía que tenía dos return values diferentes. (dani)
