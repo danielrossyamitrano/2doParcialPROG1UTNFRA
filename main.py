@@ -22,12 +22,10 @@ pg_init()
 # ----------------- CONFIGURACIÓN DE PANTALLA -----------------
 ANCHO, ALTO = 800, 600
 VENTANA = display.set_mode((ANCHO, ALTO))
-#completar con nombre del equipo
-display.set_caption("Ahorcado 💀 by EL DREAM TEAM ⭐")
 
-# comentado porque crashea el código si está vacío. Daniel.
-# icono = image.load("") # Agregar imagen para el icono del juego
-# display.set_icon(icono)
+display.set_caption("Ahorcado 💀 by EL DREAM TEAM ⭐") # Nombre del juego
+icono = image.load("data\gaturro.png") # Icono del juego
+display.set_icon(icono)
 
 FPS = time.Clock()
 
@@ -39,7 +37,6 @@ VERDE = (0, 255, 0)
 
 # ----------------- FUENTE -----------------
 FUENTE = font.SysFont(None, 48)
-
 
 #-------------------Modelo de funciones, se deberan realizar en un archivo aparte
 # Las funciones del personaje deben ser creadas y completadas por el equipo en un archivo aparte
@@ -86,10 +83,13 @@ def dibujar_juego(palabra, letras_adivinadas, errores):
     pass
 
 def dibujar_lineas(pantalla, palabra_elegida: str):
-    fondo_palabra = Surface((550, 200))  # Crear superficie para enmarcar la palabra y no sobrepase esos limites
-    fondo_palabra.fill(255, 255, 255)  # Color de fondo blanco para probar
+    fondo_palabra = Surface((700, 150))  # Crear superficie para enmarcar la palabra y no sobrepase esos limites
+    fondo_palabra.fill(BLANCO)  # Color de fondo blanco para probar
     for i in range(len(palabra_elegida)):
-        draw.line(pantalla, (0, 0, 0), (50, 50 + i * 50), (100, 50 + i * 50), 2)
+        x_inicio = 20 + i * 50
+        draw.line(fondo_palabra, (NEGRO), (x_inicio, 100), (x_inicio + 30, 100), 2)
+    pantalla.blit(fondo_palabra, (50,400))
+    return fondo_palabra
 
 
 # ----------------- VERIFICAR LETRA -----------------
@@ -131,7 +131,10 @@ def agregar_letra(letra: str, palabra: str):
 
 # ----------------- SONIDO -----------------
 # pygame.mixer.init()  # Inicializa el motor de sonido
-# sonido_error = pygame.mixer.Sound("error.wav")  # Asegurate de tener este archivo sonido_acierto = pygame.mixer.Sound("")  # Mati hace magia y agrega el sonido de acierto
+# sonido_error = pygame.mixer.Sound("error.wav")  # Asegurate de tener este archivo 
+# sonido_acierto = pygame.mixer.Sound("")  # Mati hace magia y agrega el sonido de acierto
+# sonido_muerte = pygame.mixer.Sound("")
+# sonido_ganador = pygame.mixer.Sound("")
 
 # ----------------- BUCLE PRINCIPAL -----------------
 def jugar():
@@ -151,7 +154,7 @@ def jugar():
     # esto es porque al adivinar una letra se ocuan todos los epsacios que tienen la misma letra. Ademas, case sensitive
     actual_word = actual_word.replace('rr', 'r').replace('cc', 'c').replace('ll', 'l').lower()
     corriendo = True
-
+    dibujar_lineas(VENTANA,elegida)
     while corriendo:
         FPS.tick(60) # 4.g- Controlar FPS
         # 3. Crear un bucle while que termine al cerrar el juego o al ganar/perder
