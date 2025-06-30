@@ -10,7 +10,7 @@
 # - El código debe estar comentado línea por línea.
 # - Solo las partes del cuerpo deben contar como errores, no el soporte del ahorcado.
 
-from pygame import SRCALPHA, init as pg_init, display, font, Surface, event, quit as pg_quit, time, image, draw
+from pygame import SRCALPHA, init as pg_init, display, font, Surface, event, quit as pg_quit, time, draw
 from pygame.locals import *
 from random import choice
 from sys import exit
