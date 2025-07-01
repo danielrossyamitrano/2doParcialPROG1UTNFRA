@@ -81,35 +81,38 @@ def dibujar_cuerpo(errores):
 def dibujar_juego(palabra, letras_adivinadas, errores):
     # Llenar fondo, mostrar palabra oculta, letras ingresadas y dibujar estructura y cuerpo
     pass
-
-# def dibujar_lineas(pantalla, palabra_elegida: str):
-#     fondo_palabra = Surface((740, 150), SRCALPHA)
-#     # Crear superficie para enmarcar la palabra y no sobrepase esos limites
-#     fondo_palabra.fill(NEGRO_TRANSPARENTE)  # Color de fondo blanco para probar
-#     for i in range(len(palabra_elegida)):
-#         x_inicio = 20 + i * 50
-#         draw.line(fondo_palabra, BLANCO, (x_inicio, 100), (x_inicio + 30, 100), 2)
-#     pantalla.blit(fondo_palabra, (30,440))
     
-def dibujar_lineas(pantalla, palabra_elegida: str):
-    fondo_palabra = Surface((740, 150), SRCALPHA)
-    fondo_palabra.fill(NEGRO_TRANSPARENTE)
+def mostrar_letras_adivinadas(pantalla, palabra_original, letras_adivinadas):
+    cantidad_letras = len(palabra_original)
+    espacio_entre_letras = 60
+    y_linea = 530  # Altura de la línea base
+    y_texto = 500  # Altura de la letra (un poco más arriba)
 
-    cantidad_letras = len(palabra_elegida)
-    espacio_entre_lineas = 60
-    largo_linea = 40
+    ancho_total = cantidad_letras * espacio_entre_letras
+    x_inicio = (ANCHO - ancho_total) // 2
 
-    # Ancho total ocupado por todas las líneas
-    ancho_total = cantidad_letras * espacio_entre_lineas
+    for i, letra in enumerate(palabra_original):
+        x = x_inicio + i * espacio_entre_letras
 
-    # Calcular el punto de inicio en X para centrar
-    x_inicio = (fondo_palabra.get_width() - ancho_total) // 2
+        # 1. Dibujar la línea base
+        inicio_linea = (x, y_linea)
+        fin_linea = (x + 40, y_linea)  # Línea de 40 píxeles de largo
+        draw.line(pantalla, BLANCO, inicio_linea, fin_linea, 3)
 
-    for i in range(cantidad_letras):
-        x = x_inicio + i * espacio_entre_lineas
-        draw.line(fondo_palabra, BLANCO, (x, 100), (x + largo_linea, 100), 4)
+        # 2. Normalizar la letra para comparación
+        letra_normalizada = letra.lower()
+        for tilde, sin_tilde in (('í','i'), ('ó','o'), ('á','a'), ('ú','u'), ('é','e')):
+            letra_normalizada = letra_normalizada.replace(tilde, sin_tilde)
+        for doble in (('rr','r'), ('ll','l'), ('cc','c')):
+            letra_normalizada = letra_normalizada.replace(*doble)
 
-    pantalla.blit(fondo_palabra, (30, 440))  # Posición en pantalla
+        # 3. Si fue adivinada, dibujar la letra sobre la línea
+        if letra_normalizada in letras_adivinadas:
+            texto = FUENTE.render(letra.upper(), True, BLANCO)
+            rect = texto.get_rect(center=(x + 20, y_texto))  # x + 20 centra la letra sobre la línea
+            pantalla.blit(texto, rect)
+
+
 
 # ----------------- VERIFICAR LETRA -----------------
 #Desglocé la función en dos porque me parecía que tenía dos return values diferentes. (dani)
@@ -179,7 +182,7 @@ def jugar():
     # esto es porque al adivinar una letra se ocuan todos los epsacios que tienen la misma letra. Ademas, case sensitive
     actual_word = actual_word.replace('rr', 'r').replace('cc', 'c').replace('ll', 'l').lower()
     corriendo = True
-    dibujar_lineas(VENTANA, elegida)
+    #dibujar_lineas(VENTANA, elegida)
     while corriendo:
         FPS.tick(60) # 4.g- Controlar FPS
         # 3. Crear un bucle while que termine al cerrar el juego o al ganar/perder
@@ -210,10 +213,11 @@ def jugar():
                     else:
                         # dibujar una parte del hangman
                         errores += 1  # 4.c- Incrementar errores si corresponde
-
+        
+        mostrar_letras_adivinadas(VENTANA, actual_word, adivinadas)
+        
         # 4.f- Actualizar pantalla
         display.update()
-
 
 # Instrucción: este bloque debe ser completado por el estudiante según las consignas
 # No ejecutar el juego automáticamente: solo se invoca desde consola o importación
