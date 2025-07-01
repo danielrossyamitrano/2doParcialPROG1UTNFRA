@@ -16,6 +16,7 @@ from pygame.locals import *
 from os import path, getcwd
 from random import choice
 from sys import exit
+from time import sleep
 
 pg_init()
 
@@ -38,6 +39,7 @@ VERDE = (0, 255, 0)
 
 # ----------------- FUENTE -----------------
 FUENTE = font.SysFont(None, 48)
+
 
 #-------------------Modelo de funciones, se deberan realizar en un archivo aparte
 # Las funciones del personaje deben ser creadas y completadas por el equipo en un archivo aparte
@@ -71,60 +73,42 @@ def dibujar_estructura():
 
 # Joaco: Decidamos si vamos a hacer que se acerque cada vez mas a la olla o lo que sea (baje la cuerda)
 # o le agregamos partes del cuerpo como cualquier ahorcado
-def dibujar_cuerpo(errores):
-    cuerpo_personaje = Surface((200, 200), SRCALPHA)  # Crear superficie para el cuerpo del personaje
+def dibujar_cuerpo(errores, gaturro):
+    # cuerpo_personaje = Surface((200, 200), SRCALPHA)  # Crear superficie para el cuerpo del personaje
     # Dibujar cabeza, tronco, brazos y piernas en base a la cantidad de errores
-    return cuerpo_personaje
+    return gaturro[errores]['imagen'], gaturro[errores]['rect']
 
 
 # ----------------- DIBUJAR JUEGO EN PANTALLA -----------------
-def dibujar_juego(palabra, letras_adivinadas, errores):
-    # Llenar fondo, mostrar palabra oculta, letras ingresadas y dibujar estructura y cuerpo
-    pass
-    
-def mostrar_letras_adivinadas(pantalla, palabra_original, letras_adivinadas):
-    cantidad_letras = len(palabra_original)
-    espacio_entre_letras = 60
-    y_linea = 530  # Altura de la línea base
-    y_texto = 500  # Altura de la letra (un poco más arriba)
+# def dibujar_juego(palabra, letras_adivinadas, errores):
+#     # Llenar fondo, mostrar palabra oculta, letras ingresadas y dibujar estructura y cuerpo
+#     pass
 
-    ancho_total = cantidad_letras * espacio_entre_letras
-    x_inicio = (ANCHO - ancho_total) // 2
+def dibujar_lineas(pantalla, palabra_elegida: str):
+    fondo_palabra = Surface((740, 150), SRCALPHA)
+    fondo_palabra.fill(NEGRO_TRANSPARENTE)
 
-    for i, letra in enumerate(palabra_original):
-        x = x_inicio + i * espacio_entre_letras
+    cantidad_letras = len(palabra_elegida)
+    espacio_entre_lineas = 60
+    largo_linea = 40
 
-        # 1. Dibujar la línea base
-        inicio_linea = (x, y_linea)
-        fin_linea = (x + 40, y_linea)  # Línea de 40 píxeles de largo
-        draw.line(pantalla, BLANCO, inicio_linea, fin_linea, 3)
+    # Ancho total ocupado por todas las líneas
+    ancho_total = cantidad_letras * espacio_entre_lineas
 
-        # 2. Normalizar la letra para comparación
-        letra_normalizada = letra.lower()
-        for tilde, sin_tilde in (('í','i'), ('ó','o'), ('á','a'), ('ú','u'), ('é','e')):
-            letra_normalizada = letra_normalizada.replace(tilde, sin_tilde)
-        for doble in (('rr','r'), ('ll','l'), ('cc','c')):
-            letra_normalizada = letra_normalizada.replace(*doble)
+    # Calcular el punto de inicio en X para centrar
+    x_inicio = (fondo_palabra.get_width() - ancho_total) // 2
 
-        # 3. Si fue adivinada, dibujar la letra sobre la línea
-        if letra_normalizada in letras_adivinadas:
-            texto = FUENTE.render(letra.upper(), True, BLANCO)
-            rect = texto.get_rect(center=(x + 20, y_texto))  # x + 20 centra la letra sobre la línea
-            pantalla.blit(texto, rect)
+    for i in range(cantidad_letras):
+        x = x_inicio + i * espacio_entre_lineas
+        draw.line(fondo_palabra, BLANCO, (x, 100), (x + largo_linea, 100), 4)
 
+    pantalla.blit(fondo_palabra, (30, 440))  # Posición en pantalla
 
 
 # ----------------- VERIFICAR LETRA -----------------
 #Desglocé la función en dos porque me parecía que tenía dos return values diferentes. (dani)
 # Joaco: Me parecio mejor que tambien se muestre la lista de letras ya utilizadas,
 # sobretodo las erradas, arme otra lista para eso
-
-
-# def verificar_letra(letra: str, letras_adivinadas: list):
-#     # Agregar la letra a letras_adivinadas si no estaba
-#     if letra not in letras_adivinadas:
-#         letras_adivinadas.append(letra)
-#     return letras_adivinadas
 
 def verificar_letra(letra: str, palabra: str, letras_adivinadas: list, letras_incorrectas: list):
     # Verifica que la letra no fue utilizada antes
@@ -159,10 +143,21 @@ def agregar_letra(letra: str, palabra: str):
 # sonido_ganador = pygame.mixer.Sound("")
 
 # ----------------- BUCLE PRINCIPAL -----------------
+
+IMAGENES = [
+    {'imagen': transform.scale(cargar_imagen('Cabeza_4.png'), [100, 100]), 'rect': [350, 200]},
+    {'imagen': transform.scale(cargar_imagen('Torso_5.png'), [100, 100]), 'rect': [350, 201]},
+    {'imagen': transform.scale(cargar_imagen('Brazo_Derecho_6.png'), [100, 100]), 'rect': [350, 200]},
+    {'imagen': transform.scale(cargar_imagen('Brazo_Izquierdo_1.png'), [100, 100]), 'rect': [349, 202]},
+    {'imagen': transform.scale(cargar_imagen('Pierna_Derecha_3.png'), [100, 100]), 'rect': [349, 201]},
+    {'imagen': transform.scale(cargar_imagen('Pierna_Izquierda_2.png'), [100, 100]), 'rect': [349, 200]},
+]
+
+
 def jugar():
     fondo = cargar_imagen('FondoFinal.png')
-    fondo_escalado = transform.scale(fondo,[800,600])
-    VENTANA.blit(fondo_escalado,(0, 0))
+    fondo_escalado = transform.scale(fondo, [800, 600])
+    VENTANA.blit(fondo_escalado, (0, 0))
 
     cargar_musica('MusicaFondo.wav')
 
@@ -184,21 +179,22 @@ def jugar():
     corriendo = True
     #dibujar_lineas(VENTANA, elegida)
     while corriendo:
-        FPS.tick(60) # 4.g- Controlar FPS
+        FPS.tick(60)  # 4.g- Controlar FPS
         # 3. Crear un bucle while que termine al cerrar el juego o al ganar/perder
         for e in event.get([KEYDOWN, QUIT]):  #4.a- Capturar eventos (teclas)
             if (e.type == KEYDOWN and e.key == K_ESCAPE) or e.type == QUIT:
                 pg_quit()
                 exit()
             # imprimir las lineas de la palabra a adivinar
-            
-            elif KEYDOWN:
+
+            elif e.type == KEYDOWN:
                 letra = e.unicode
                 if len(letra) == 1 and letra.isalpha():  # 4.b- Verificar letras
                     adivinadas, incorrectas = verificar_letra(letra, actual_word, adivinadas, incorrectas)
                     # 4.e- Verificar condiciones de fin (victoria o derrota)
-                    if len(incorrectas) >= espacios:
+                    if len(incorrectas) > 6:
                         print('Perdiste')
+                        sleep(3)
                         corriendo = False
 
                     elif adivinadas == espacios:
@@ -212,10 +208,11 @@ def jugar():
 
                     else:
                         # dibujar una parte del hangman
-                        errores += 1  # 4.c- Incrementar errores si corresponde
-        
-        mostrar_letras_adivinadas(VENTANA, actual_word, adivinadas)
-        
+                        if errores <= 5:
+                            imagen, rect = dibujar_cuerpo(errores, IMAGENES)
+                            VENTANA.blit(imagen, rect)
+                            errores += 1  # 4.c- Incrementar errores si corresponde
+
         # 4.f- Actualizar pantalla
         display.update()
 
