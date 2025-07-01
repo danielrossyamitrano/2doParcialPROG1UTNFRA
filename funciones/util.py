@@ -18,4 +18,5 @@ def cargar_musica(filename):
     filepath = path.join(getcwd(), 'data', 'musica', filename)
     if path.exists(filepath):
         music.load(filepath)
+        music.set_volume(0.1)
     music.play(-1)
