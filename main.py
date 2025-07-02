@@ -10,7 +10,8 @@
 # - El código debe estar comentado línea por línea.
 # - Solo las partes del cuerpo deben contar como errores, no el soporte del ahorcado.
 
-from pygame import init as pg_init, display, font, event, quit as pg_quit, time, draw, transform
+#---------------------------------------------------------------------------------
+from pygame import init as pg_init, display, font, event, quit as pg_quit, time, draw, transform, mixer
 from funciones import abrir_txt as cargar_palabras, cargar_imagen, cargar_musica
 from pygame.locals import *
 from os import path, getcwd
@@ -145,12 +146,9 @@ def agregar_letra(letra: str, palabra: str):
     return letra in palabra
 
 
-# ----------------- SONIDO -----------------
-# pygame.mixer.init()  # Inicializa el motor de sonido
-# sonido_error = pygame.mixer.Sound("error.wav")  # Asegurate de tener este archivo 
-# sonido_acierto = pygame.mixer.Sound("")  # Mati hace magia y agrega el sonido de acierto
-# sonido_muerte = pygame.mixer.Sound("")
-# sonido_ganador = pygame.mixer.Sound("")
+
+sonido_error = mixer.Sound('data\musica\Oof.mp3') # Cargamos el sonido de error que elegimos
+sonido_error.set_volume(0.3)  # Bajamos el volumen del sonido porque el audio original es muy fuerte
 
 # ----------------- BUCLE PRINCIPAL -----------------
 
@@ -205,8 +203,18 @@ def jugar():
                     adivinadas, incorrectas = verificar_letra(letra, actual_word, adivinadas, incorrectas)
                     # 4.e- Verificar condiciones de fin (victoria o derrota)
                     if len(incorrectas) > 6:
-                        print('Perdiste')
-                        sleep(3)
+                        VENTANA.fill(NEGRO) # Pantalla en negro para mostrar el mensaje que perdiste
+                        
+                        imagen_perdedor = cargar_imagen('you_died.png')
+                        cargar_musica('risa_bruja_perdedor.mp3')
+                        img_perdedor_escalada = transform.scale(imagen_perdedor, (700, 200))
+                        rect = img_perdedor_escalada.get_rect(center=(ANCHO // 2, ALTO // 2))
+                        
+                        VENTANA.blit(img_perdedor_escalada, rect)
+                        display.update()
+                        
+                        sleep(6)
+                        
                         corriendo = False
 
                     elif set(actual_word) <= set(adivinadas): # Usamos set para verificar que todas las letras de la palabra fueron adivinadas, el set hace que no importe el orden de las letras y elimina las repetidas
@@ -220,7 +228,7 @@ def jugar():
                         VENTANA.blit(img_ganador_escalada, rect) # Bliteamos la imagen en pantalla
                         display.update() # Actualizamos la pantalla
                         
-                        sleep(6) # Contador de 6 segundos (duracion de la musiquiuta) antes de que se actualice otra vez la pantalla
+                        sleep(7.5) # Contador de 7,5 segundos (duracion de la musiquiuta) antes de que se actualice otra vez la pantalla
                         
                         corriendo = False
 
@@ -232,9 +240,10 @@ def jugar():
                     else:
                         # dibujar una parte del hangman
                         if errores <= 5:
-                            imagen, rect = dibujar_cuerpo(errores, IMAGENES)
+                            imagen, rect = dibujar_cuerpo(errores, IMAGENES) # Bliteamos la imagen del cuerpo del personaje que corresponde
                             VENTANA.blit(imagen, rect)
-                            errores += 1  # 4.c- Incrementar errores si corresponde
+                            errores += 1 # sumamos un error si la letra no está en la palabra
+                            sonido_error.play() #Reproducimos el sonido de error # 4.c- Incrementar errores si corresponde
 
         mostrar_letras_adivinadas(VENTANA, actual_word, adivinadas)
 
