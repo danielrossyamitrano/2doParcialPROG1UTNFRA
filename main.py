@@ -12,7 +12,7 @@
 
 #---------------------------------------------------------------------------------
 from engine import agregar_letra, dibujar_cuerpo, elegir_palabra, mostrar_letras_adivinadas, verificar_letra
-from engine import abrir_txt as cargar_palabras, cargar_imagen, cargar_musica, salir
+from engine import abrir_txt as cargar_palabras, cargar_imagen, cargar_musica, salir, detener_musica
 from engine.constantes import ANCHO, ALTO, NEGRO, FUENTE_REPETIDA, ROJO
 from pygame import init as pg_init, display, event, time, transform
 from pygame.locals import *
@@ -21,20 +21,12 @@ from os import path
 
 pg_init()
 
-# ----------------- CONFIGURACIÓN DE PANTALLA -----------------
-
-fondo = display.set_mode((ANCHO, ALTO))
-display.set_caption("Ahorcado 💀 by EL DREAM TEAM ⭐")  # Nombre del juego
-icono = cargar_imagen("gaturro.png")  # Icono del juego
-display.set_icon(icono)
-FPS = time.Clock()
-
 
 # ------------------ FUNCION PRINCIPAL -------------------
-def jugar():
+def jugar(pantalla):
     imagen_fondo = cargar_imagen('fondo_final.png')  # Cargamos la imagen para el fondo del juego
     fondo_escalado = transform.scale(imagen_fondo, [800, 600])  # Escalamos la imagen al tamaño de la ventana
-    fondo.blit(fondo_escalado, (0, 0))
+    pantalla.blit(fondo_escalado, (0, 0))
 
     cargar_musica('MusicaFondo.wav')  # Cargamos la musica de fondo
 
@@ -60,9 +52,6 @@ def jugar():
     while corriendo:
         FPS.tick(60)  # 4.g- Controlar FPS
 
-        # VENTANA.blit(fondo_escalado, (0, 0))
-        # Dibujamos el fondo en cada iteracion del bucle para que no se superpongan las imagenes y textos
-
         # 3. Crear un bucle while que termine al cerrar el juego o al ganar/perder
         for e in event.get([KEYDOWN, QUIT]):  #4.a- Capturar eventos (teclas)
             if (e.type == KEYDOWN and e.key == K_ESCAPE) or e.type == QUIT:
@@ -83,17 +72,18 @@ def jugar():
 
                     # 4.e- Verificar condiciones de fin (victoria o derrota)
                     if len(incorrectas) > 6:  # Cuando se superan los 6 errores, perdes
-                        fondo.fill(NEGRO)  # Pantalla en negro para mostrar el mensaje que perdiste
+                        pantalla.fill(NEGRO)  # Pantalla en negro para mostrar el mensaje que perdiste
 
                         imagen_perdedor = cargar_imagen('you_died.png')  # Cargamos la imagen que avisa que perdiste
                         cargar_musica('risa_bruja_perdedor.mp3')  # Reproducimos el sonido del perdedor
                         img_perdedor_escalada = transform.scale(imagen_perdedor, (700, 200))
                         # Reescalamos la imagen para que entre bien en la pantall
-                        rect = img_perdedor_escalada.get_rect(
-                            center=(ANCHO // 2, ALTO // 2))  # Creamos una superficie donde se va a mostrar la imagen
+                        rect = img_perdedor_escalada.get_rect(center=(ANCHO // 2, ALTO // 2))
+                        # Creamos una superficie donde se va a mostrar la imagen
 
-                        fondo.blit(img_perdedor_escalada, rect)
-                        # display.update()
+                        pantalla.blit(img_perdedor_escalada, rect)
+                        detener_musica()
+                        display.update()
 
                         sleep(6)
                         # Agregamos tiempo de espera antes de que se actualice la pantalla
@@ -105,7 +95,7 @@ def jugar():
                         # Usamos set para verificar que todas las letras de la palabra fueron adivinadas,
                         # el set hace que no importe el orden de las letras y elimina las repetidas
 
-                        fondo.fill(NEGRO)  # Pantalla en negro para poner el mensaje ganador
+                        pantalla.fill(NEGRO)  # Pantalla en negro para poner el mensaje ganador
 
                         imagen_ganador = cargar_imagen('Respect.png')  # Cargamos la imagen en una variable
                         cargar_musica('respect.mp3')  # Cargamos musica ganadora
@@ -114,8 +104,9 @@ def jugar():
                         # Armamos un rectangulo donde mostrar la imagen y la centramos
                         # para que quede en el medio de la pantalla
 
-                        fondo.blit(img_ganador_escalada, rect)  # Bliteamos la imagen en pantalla
-                        # display.update()  # Actualizamos la pantalla
+                        pantalla.blit(img_ganador_escalada, rect)  # Bliteamos la imagen en pantalla
+                        detener_musica()
+                        display.update()  # Actualizamos la pantalla
 
                         sleep(7.5)  # Agregamos tiempo de espera antes de que se actualice la pantalla
                         # asi da teiempo al audio a reproducirse
@@ -129,30 +120,52 @@ def jugar():
                             # porque no se están mostrando las letras ya elegidas.
                             if errores <= 5:
                                 # dibujar una parte del hangman
-                                imagen, rect = dibujar_cuerpo(errores)
+                                imagen, rect = dibujar_cuerpo(errores, gaturro)
                                 # Bliteamos la imagen del cuerpo del personaje que corresponde
-                                fondo.blit(imagen, rect)
+                                pantalla.blit(imagen, rect)
                                 # 4.c- Incrementar errores si corresponde
                                 errores += 1
                                 # sumamos un error si la letra no está en la palabra
 
-        mostrar_letras_adivinadas(fondo, elegida, adivinadas)
+        if corriendo:
+            mostrar_letras_adivinadas(pantalla, elegida, adivinadas)
 
         if mensaje:
             texto = FUENTE_REPETIDA.render(mensaje, True, ROJO)  # Color rojo
             rect = texto.get_rect(center=(ANCHO // 2, ALTO - 50))  # Abajo en el centro
-            fondo.blit(texto, rect)
+            pantalla.blit(texto, rect)
             display.update()
             if sleep(2) is None:
                 mensaje = ''
                 eraser = fondo_escalado.subsurface(rect)
-                fondo.blit(eraser, rect)
+                pantalla.blit(eraser, rect)
                 display.update()
 
         # 4.f- Actualizar pantalla
         display.update()
 
+
 # Instrucción: este bloque debe ser completado por el estudiante según las consignas
 # No ejecutar el juego automáticamente: solo se invoca desde consola o importación
 # Descomentar la línea siguiente para probar el juego terminado:
 # jugar()
+
+if __name__ == "__main__":
+    # ----------------- CONFIGURACIÓN DE PANTALLA -----------------
+
+    fondo = display.set_mode((ANCHO, ALTO))
+    display.set_caption("Ahorcado 💀 by EL DREAM TEAM ⭐")  # Nombre del juego
+    icono = cargar_imagen("gaturro.png")  # Icono del juego
+    display.set_icon(icono)
+    FPS = time.Clock()
+
+    # ----------------- REESCALADO DE PARTES DEL CUERPO GATURRO -----------------
+    gaturro = [  # Reescalamos las imageens de gaturro y guardamos en un diccionario
+        {'imagen': transform.scale(cargar_imagen('Cabeza_4.png'), [100, 100]), 'rect': [350, 200]},
+        {'imagen': transform.scale(cargar_imagen('Torso_5.png'), [100, 100]), 'rect': [350, 201]},
+        {'imagen': transform.scale(cargar_imagen('Brazo_Derecho_6.png'), [100, 100]), 'rect': [350, 200]},
+        {'imagen': transform.scale(cargar_imagen('Brazo_Izquierdo_1.png'), [100, 100]), 'rect': [349, 202]},
+        {'imagen': transform.scale(cargar_imagen('Pierna_Derecha_3.png'), [100, 100]), 'rect': [349, 201]},
+        {'imagen': transform.scale(cargar_imagen('Pierna_Izquierda_2.png'), [100, 100]), 'rect': [349, 200]},
+    ]
+    jugar(fondo)
