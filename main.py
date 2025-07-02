@@ -10,7 +10,7 @@
 # - El código debe estar comentado línea por línea.
 # - Solo las partes del cuerpo deben contar como errores, no el soporte del ahorcado.
 
-from pygame import SRCALPHA, init as pg_init, display, font, Surface, event, quit as pg_quit, time, draw, transform
+from pygame import init as pg_init, display, font, event, quit as pg_quit, time, draw, transform
 from funciones import abrir_txt as cargar_palabras, cargar_imagen, cargar_musica
 from pygame.locals import *
 from os import path, getcwd
@@ -80,30 +80,10 @@ def dibujar_cuerpo(errores, gaturro):
 
 
 # ----------------- DIBUJAR JUEGO EN PANTALLA -----------------
-# def dibujar_juego(palabra, letras_adivinadas, errores):
-#     # Llenar fondo, mostrar palabra oculta, letras ingresadas y dibujar estructura y cuerpo
-#     pass
+def dibujar_juego(palabra, letras_adivinadas, errores):
+    # Llenar fondo, mostrar palabra oculta, letras ingresadas y dibujar estructura y cuerpo
+    pass
 
-def dibujar_lineas(pantalla, palabra_elegida: str):
-    fondo_palabra = Surface((740, 150), SRCALPHA)
-    fondo_palabra.fill(NEGRO_TRANSPARENTE)
-
-    cantidad_letras = len(palabra_elegida)
-    espacio_entre_lineas = 60
-    largo_linea = 40
-
-    # Ancho total ocupado por todas las líneas
-    ancho_total = cantidad_letras * espacio_entre_lineas
-
-    # Calcular el punto de inicio en X para centrar
-    x_inicio = (fondo_palabra.get_width() - ancho_total) // 2
-
-    for i in range(cantidad_letras):
-        x = x_inicio + i * espacio_entre_lineas
-        draw.line(fondo_palabra, BLANCO, (x, 100), (x + largo_linea, 100), 4)
-
-    pantalla.blit(fondo_palabra, (30, 440))
-    
 def mostrar_letras_adivinadas(pantalla, palabra_original, letras_adivinadas):
     cantidad_letras = len(palabra_original)
     espacio_entre_letras = 60
@@ -256,7 +236,8 @@ def jugar():
                             VENTANA.blit(imagen, rect)
                             errores += 1  # 4.c- Incrementar errores si corresponde
 
-        mostrar_letras_adivinadas(VENTANA, elegida, adivinadas)
+        mostrar_letras_adivinadas(VENTANA, actual_word, adivinadas)
+
         # 4.f- Actualizar pantalla
         display.update()
 
