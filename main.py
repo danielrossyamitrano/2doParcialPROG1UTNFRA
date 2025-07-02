@@ -17,7 +17,7 @@ from os import path, getcwd
 from random import choice
 from sys import exit
 from time import sleep
-from Funciones_Generales import verificar_letra, elegir_palabra, agregar_letra
+from Funciones_Generales import verificar_letra, elegir_palabra, agregar_letra, mostrar_letras_adivinadas
 pg_init()
 
 # ----------------- CONFIGURACIÓN DE PANTALLA -----------------
@@ -81,35 +81,7 @@ def dibujar_juego(palabra, letras_adivinadas, errores):
     # Llenar fondo, mostrar palabra oculta, letras ingresadas y dibujar estructura y cuerpo
     pass
 
-def mostrar_letras_adivinadas(pantalla, palabra_original, letras_adivinadas):
-    cantidad_letras = len(palabra_original)
-    espacio_entre_letras = 60
-    y_linea = 530  # Altura de la línea base
-    y_texto = 500  # Altura de la letra (un poco más arriba)
-
-    ancho_total = cantidad_letras * espacio_entre_letras
-    x_inicio = (ANCHO - ancho_total) // 2
-
-    for i, letra in enumerate(palabra_original):
-        x = x_inicio + i * espacio_entre_letras
-
-        # 1. Dibujar la línea base
-        inicio_linea = (x, y_linea)
-        fin_linea = (x + 40, y_linea)  # Línea de 40 píxeles de largo
-        draw.line(pantalla, BLANCO, inicio_linea, fin_linea, 3)
-
-        # 2. Normalizar la letra para comparación
-        letra_normalizada = letra.lower()
-        for tilde, sin_tilde in (('í','i'), ('ó','o'), ('á','a'), ('ú','u'), ('é','e')):
-            letra_normalizada = letra_normalizada.replace(tilde, sin_tilde)
-        for doble in (('rr','r'), ('ll','l'), ('cc','c')):
-            letra_normalizada = letra_normalizada.replace(*doble)
-
-        # 3. Si fue adivinada, dibujar la letra sobre la línea
-        if letra_normalizada in letras_adivinadas:
-            texto = FUENTE.render(letra.upper(), True, BLANCO)
-            rect = texto.get_rect(center=(x + 20, y_texto))  # x + 20 centra la letra sobre la línea
-            pantalla.blit(texto, rect)
+mostrar_letras_adivinadas
 
 
 
