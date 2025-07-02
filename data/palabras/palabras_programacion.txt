@@ -1,0 +1,10 @@
+Python
+Pygame
+bucle
+diccionario
+cadena
+conjunto
+lista
+función
+argumento
+booleano
