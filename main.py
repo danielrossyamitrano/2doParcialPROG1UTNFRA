@@ -22,6 +22,7 @@ from time import sleep
 pg_init()
 
 # ----------------- CONFIGURACIÓN DE PANTALLA -----------------
+
 ANCHO, ALTO = 800, 600
 VENTANA = display.set_mode((ANCHO, ALTO))
 
@@ -32,106 +33,75 @@ display.set_icon(icono)
 FPS = time.Clock()
 
 # ----------------- COLORES  se pueden modificar por los que elija el equipo-----------------
+
 BLANCO = (255, 255, 255)
 NEGRO = (0, 0, 0)
 NEGRO_TRANSPARENTE = (0, 0, 0, 0)  # Color
 ROJO = (255, 0, 0)
 VERDE = (0, 255, 0)
 
-# ----------------- FUENTE -----------------
+# ----------------- FUENTES -----------------
+
 FUENTE = font.SysFont('Century', 48)
 FUENTE_REPETIDA = font.SysFont('Century', 24)  # Fuente para mensajes repetidos
-
 
 #-------------------Modelo de funciones, se deberan realizar en un archivo aparte
 # Las funciones del personaje deben ser creadas y completadas por el equipo en un archivo aparte
 # -------------------
 
-# ----------------- CARGAR PALABRAS DESDE ARCHIVO -----------------
-# def cargar_palabras():
-#     # Leer las palabras desde un archivo de texto y devolver una lista
-#     # Asegurate de tener un archivo llamado palabras.txt con una palabra por línea
-#     pass
-
-#IMPLEMENTADO: función funciones/util.abrir_txt()
-#AUTOR: Daniel Rossy Amitrano
-
-
 # ----------------- ELEGIR PALABRA AL AZAR -----------------
+
 def elegir_palabra(lista_palabras):
     # Elegir una palabra aleatoria de la lista y convertirla a mayúsculas
     chosen = choice(lista_palabras)
     return chosen.upper()
 
-
-# ----------------- DIBUJAR ESTRUCTURA DEL AHORCADO -----------------
-# Joaco: No se que tanto utilizemos esta funcion, si pensabamos dibujar la estructura como parte del fondo
-def dibujar_estructura():
-    # Dibuja la base, palo y cuerda del ahorcado (no cuenta como error)
-    pass
-
-
 # ----------------- DIBUJAR PARTES DEL CUERPO -----------------
 
-# Joaco: Decidamos si vamos a hacer que se acerque cada vez mas a la olla o lo que sea (baje la cuerda)
-# o le agregamos partes del cuerpo como cualquier ahorcado
 def dibujar_cuerpo(errores, gaturro):
-    # cuerpo_personaje = Surface((200, 200), SRCALPHA)  # Crear superficie para el cuerpo del personaje
     # Dibujar cabeza, tronco, brazos y piernas en base a la cantidad de errores
     return gaturro[errores]['imagen'], gaturro[errores]['rect']
 
-
-# ----------------- DIBUJAR JUEGO EN PANTALLA -----------------
-def dibujar_juego(palabra, letras_adivinadas, errores):
-    # Llenar fondo, mostrar palabra oculta, letras ingresadas y dibujar estructura y cuerpo
-    pass
+# ----------------- DIBUJAR LINEAS Y LETRAS EN PANTALLA -----------------
 
 def mostrar_letras_adivinadas(pantalla, palabra_original, letras_adivinadas):
     cantidad_letras = len(palabra_original)
-    espacio_entre_letras = 60
-    y_linea = 530  # Altura de la línea base
-    y_texto = 500  # Altura de la letra (un poco más arriba)
+    espacio_entre_letras = 60 # Buscamos un espacion entre cada letra que se vea bien en pantalla
+    y_linea = 530  # Le ponemos una altura a las lineas
+    y_texto = 500  # Y aca a las letras que van apareciendo
 
-    ancho_total = cantidad_letras * espacio_entre_letras
-    x_inicio = (ANCHO - ancho_total) // 2
+    ancho_total = cantidad_letras * espacio_entre_letras # Calculamos el ancho de toda la palabra
+    x_inicio = (ANCHO - ancho_total) // 2 # Centramos la palabra en pantalla 
 
-    for i, letra in enumerate(palabra_original):
-        x = x_inicio + i * espacio_entre_letras
+    for i, letra in enumerate(palabra_original): # Recorremos la palabra original y sacamos el indice y la letra con enumerate
+        x = x_inicio + i * espacio_entre_letras # Calculamos la posicion en x de cada letra
 
-        # 1. Dibujar la línea base
-        inicio_linea = (x, y_linea)
-        fin_linea = (x + 40, y_linea)  # Línea de 40 píxeles de largo
-        draw.line(pantalla, BLANCO, inicio_linea, fin_linea, 3)
+        draw.line(pantalla, BLANCO, (x, y_linea), (x + 40, y_linea), 3) # Dibujamos la linea de cada letra
 
-        # 2. Normalizar la letra para comparación
-        letra_normalizada = letra.lower()
+        letra_normalizada = letra.lower() # Pasamos la letra a minuscula para una comparacion mas facik
         for tilde, sin_tilde in (('í','i'), ('ó','o'), ('á','a'), ('ú','u'), ('é','e')):
-            letra_normalizada = letra_normalizada.replace(tilde, sin_tilde)
+            letra_normalizada = letra_normalizada.replace(tilde, sin_tilde) # Eliminamos las tildes de las letras para que se puede comparar
         for doble in (('rr','r'), ('ll','l'), ('cc','c')):
-            letra_normalizada = letra_normalizada.replace(*doble)
-
-        # 3. Si fue adivinada, dibujar la letra sobre la línea
-        if letra_normalizada in letras_adivinadas:
-            texto = FUENTE.render(letra.upper(), True, BLANCO)
-            rect = texto.get_rect(center=(x + 20, y_texto))  # x + 20 centra la letra sobre la línea
+            letra_normalizada = letra_normalizada.replace(*doble) # Eliminamos las letras dobles por la misma razon
+            
+        if letra_normalizada in letras_adivinadas: # Si esta la letra en las letras adivinadas
+            texto = FUENTE.render(letra.upper(), True, BLANCO) # Convertimos la letra a mayuscula y la mostramos en pantalla
+            rect = texto.get_rect(center=(x + 20, y_texto))  # Acomodamos la letra sobre la linea
             pantalla.blit(texto, rect)
-
 
 # ----------------- VERIFICAR LETRA -----------------
 
 def verificar_letra(letra: str, palabra: str, letras_adivinadas: list, letras_incorrectas: list):
-    # Verifica que la letra no fue utilizada antes
-    if letra in letras_adivinadas or letra in letras_incorrectas:
-        mensaje_repetida = f"La letra '{letra}' ya fue utilizada"
-        return letras_adivinadas, letras_incorrectas, mensaje_repetida
-    # Si la letra esta en la palabra la agregamos a letras_adivinadas
-    if letra in palabra:
+    if letra in letras_adivinadas or letra in letras_incorrectas: # Verificamos si la letra ya no fue utilizada
+        mensaje_repetida = f"La letra '{letra}' ya fue utilizada" # Mensaje si es que ya fue utilizada
+        return letras_adivinadas, letras_incorrectas, mensaje_repetida # 
+    
+    if letra in palabra: # Si la letra esta en la palabra
         sonido_correcto.play() # Reproducimos el sonido de acierto
-        letras_adivinadas.append(letra)
-    else:
+        letras_adivinadas.append(letra) # Y agregamos la letra a la lista de letras adivinadas
+    else: # Si la letra no esta en la palabra
         sonido_error.play() #Reproducimos el sonido de error 
-        # Si la letra no está en la palabra, la agregamos a letras_incorrectas
-        letras_incorrectas.append(letra)
+        letras_incorrectas.append(letra) # Y la agregamos a la lista de letras incorrectas
 
     return letras_adivinadas, letras_incorrectas
 
@@ -139,18 +109,16 @@ def agregar_letra(letra: str, palabra: str):
     # Retornar True si la letra está en la palabra, False si no
     return letra in palabra
 
-
+# ----------------- SONIDOS ------------------
 
 sonido_error = mixer.Sound('data\musica\Oof.mp3') # Cargamos el sonido de error que elegimos
 sonido_error.set_volume(0.3)  # Bajamos el volumen del sonido porque el audio original es muy fuerte
 sonido_correcto = mixer.Sound('data\musica\correcto.mp3') # Cargamos el sonido de acierto que elegimos
 sonido_correcto.set_volume(0.3)
 
-# ----------------- BUCLE PRINCIPAL -----------------
-
 # ----------------- REESCALADO DE PARTES DEL CUERPO GATURRO -----------------
 
-IMAGENES = [
+IMAGENES = [ # Reescalamos las imageens de gaturro y guardamos en un diccionario
     {'imagen': transform.scale(cargar_imagen('Cabeza_4.png'), [100, 100]), 'rect': [350, 200]},
     {'imagen': transform.scale(cargar_imagen('Torso_5.png'), [100, 100]), 'rect': [350, 201]},
     {'imagen': transform.scale(cargar_imagen('Brazo_Derecho_6.png'), [100, 100]), 'rect': [350, 200]},
@@ -159,6 +127,7 @@ IMAGENES = [
     {'imagen': transform.scale(cargar_imagen('Pierna_Izquierda_2.png'), [100, 100]), 'rect': [349, 200]},
 ]
 
+# ------------------ FUNCION PRINCIPAL -------------------
 
 def jugar():
     fondo = cargar_imagen('FondoFinal.png') # Cargamos la imagen para el fondo del juego
