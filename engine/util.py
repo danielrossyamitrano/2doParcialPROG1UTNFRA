@@ -42,10 +42,15 @@ def salir():
     exit()
 
 
+def detener_musica():
+    music.stop()
+
+
 __all__ = [
     'salir',
     'cargar_sonidos',
     'cargar_imagen',
     'cargar_musica',
-    'abrir_txt'
+    'abrir_txt',
+    'detener_musica'
 ]
