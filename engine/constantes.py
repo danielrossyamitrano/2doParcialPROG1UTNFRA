@@ -16,6 +16,8 @@ VERDE = (0, 255, 0)
 mixer.init()
 sonido_error = cargar_sonidos('Oof.mp3')  # Cargamos el sonido de error que elegimos
 sonido_correcto = cargar_sonidos('correcto.mp3')  # Cargamos el sonido de acierto que elegimos
+risa = cargar_sonidos('risa_bruja_perdedor.mp3')
+win = cargar_sonidos('respect.mp3')
 
 # ----------------- FUENTES -----------------
 font.init()

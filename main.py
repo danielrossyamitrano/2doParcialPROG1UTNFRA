@@ -13,7 +13,7 @@
 #---------------------------------------------------------------------------------
 from engine import agregar_letra, dibujar_cuerpo, elegir_palabra, mostrar_letras_adivinadas, verificar_letra
 from engine import abrir_txt as cargar_palabras, cargar_imagen, cargar_musica, salir, detener_musica
-from engine.constantes import ANCHO, ALTO, NEGRO, FUENTE_REPETIDA, ROJO
+from engine.constantes import ANCHO, ALTO, NEGRO, FUENTE_REPETIDA, ROJO, risa, win
 from pygame import init as pg_init, display, event, time, transform
 from pygame.locals import *
 from time import sleep
@@ -75,7 +75,6 @@ def jugar(pantalla):
                         pantalla.fill(NEGRO)  # Pantalla en negro para mostrar el mensaje que perdiste
 
                         imagen_perdedor = cargar_imagen('you_died.png')  # Cargamos la imagen que avisa que perdiste
-                        cargar_musica('risa_bruja_perdedor.mp3')  # Reproducimos el sonido del perdedor
                         img_perdedor_escalada = transform.scale(imagen_perdedor, (700, 200))
                         # Reescalamos la imagen para que entre bien en la pantall
                         rect = img_perdedor_escalada.get_rect(center=(ANCHO // 2, ALTO // 2))
@@ -83,6 +82,7 @@ def jugar(pantalla):
 
                         pantalla.blit(img_perdedor_escalada, rect)
                         detener_musica()
+                        risa.play()  # Reproducimos el sonido del perdedor
                         display.update()
 
                         sleep(6)
@@ -98,7 +98,6 @@ def jugar(pantalla):
                         pantalla.fill(NEGRO)  # Pantalla en negro para poner el mensaje ganador
 
                         imagen_ganador = cargar_imagen('Respect.png')  # Cargamos la imagen en una variable
-                        cargar_musica('respect.mp3')  # Cargamos musica ganadora
                         img_ganador_escalada = transform.scale(imagen_ganador, (400, 300))
                         rect = img_ganador_escalada.get_rect(center=(ANCHO // 2, ALTO // 2))
                         # Armamos un rectangulo donde mostrar la imagen y la centramos
@@ -106,6 +105,7 @@ def jugar(pantalla):
 
                         pantalla.blit(img_ganador_escalada, rect)  # Bliteamos la imagen en pantalla
                         detener_musica()
+                        win.play()  # Cargamos musica ganadora
                         display.update()  # Actualizamos la pantalla
 
                         sleep(7.5)  # Agregamos tiempo de espera antes de que se actualice la pantalla
