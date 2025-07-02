@@ -39,7 +39,8 @@ ROJO = (255, 0, 0)
 VERDE = (0, 255, 0)
 
 # ----------------- FUENTE -----------------
-FUENTE = font.SysFont(None, 48)
+FUENTE = font.SysFont('Century', 48)
+FUENTE_REPETIDA = font.SysFont('Century', 24)  # Fuente para mensajes repetidos
 
 
 #-------------------Modelo de funciones, se deberan realizar en un archivo aparte
@@ -117,29 +118,22 @@ def mostrar_letras_adivinadas(pantalla, palabra_original, letras_adivinadas):
 
 
 # ----------------- VERIFICAR LETRA -----------------
-#Desglocé la función en dos porque me parecía que tenía dos return values diferentes. (dani)
-# Joaco: Me parecio mejor que tambien se muestre la lista de letras ya utilizadas,
-# sobretodo las erradas, arme otra lista para eso
 
 def verificar_letra(letra: str, palabra: str, letras_adivinadas: list, letras_incorrectas: list):
     # Verifica que la letra no fue utilizada antes
     if letra in letras_adivinadas or letra in letras_incorrectas:
-        print(f"La letra '{letra}' ya fue utilizada. Intente con otra.")
-        return letras_adivinadas, letras_incorrectas
-
+        mensaje_repetida = f"La letra '{letra}' ya fue utilizada"
+        return letras_adivinadas, letras_incorrectas, mensaje_repetida
     # Si la letra esta en la palabra la agregamos a letras_adivinadas
     if letra in palabra:
-        print(f"La Letra '{letra}' se encuentra en la palabra.")
-        # AGREGAR SONIDO DE CELEBRACION
+        sonido_correcto.play() # Reproducimos el sonido de acierto
         letras_adivinadas.append(letra)
     else:
+        sonido_error.play() #Reproducimos el sonido de error 
         # Si la letra no está en la palabra, la agregamos a letras_incorrectas
-        print(f"La letra '{letra}' no se encuentra en la palabra.")
-        #AGREGAR SONIDO DE ERROR
         letras_incorrectas.append(letra)
 
     return letras_adivinadas, letras_incorrectas
-
 
 def agregar_letra(letra: str, palabra: str):
     # Retornar True si la letra está en la palabra, False si no
@@ -149,6 +143,8 @@ def agregar_letra(letra: str, palabra: str):
 
 sonido_error = mixer.Sound('data\musica\Oof.mp3') # Cargamos el sonido de error que elegimos
 sonido_error.set_volume(0.3)  # Bajamos el volumen del sonido porque el audio original es muy fuerte
+sonido_correcto = mixer.Sound('data\musica\correcto.mp3') # Cargamos el sonido de acierto que elegimos
+sonido_correcto.set_volume(0.3)
 
 # ----------------- BUCLE PRINCIPAL -----------------
 
@@ -187,9 +183,12 @@ def jugar():
     # esto es porque al adivinar una letra se ocupan todos los espacios que tienen la misma letra. Ademas, case sensitive
     actual_word = actual_word.replace('rr', 'r').replace('cc', 'c').replace('ll', 'l').lower()
     corriendo = True
-    #dibujar_lineas(VENTANA, elegida)
+    mensaje = "" # Inicializamos un mensaje vacío para mostrar si la letra ya fue utilizada
+    
     while corriendo:
         FPS.tick(60)  # 4.g- Controlar FPS
+        
+        VENTANA.blit(fondo_escalado, (0, 0))  # Dibujamos el fondo en cada iteracion del bucle para que no se superpongan las imagenes y textos
         # 3. Crear un bucle while que termine al cerrar el juego o al ganar/perder
         for e in event.get([KEYDOWN, QUIT]):  #4.a- Capturar eventos (teclas)
             if (e.type == KEYDOWN and e.key == K_ESCAPE) or e.type == QUIT:
@@ -200,20 +199,25 @@ def jugar():
             elif e.type == KEYDOWN:
                 letra = e.unicode
                 if len(letra) == 1 and letra.isalpha():  # 4.b- Verificar letras
-                    adivinadas, incorrectas = verificar_letra(letra, actual_word, adivinadas, incorrectas)
+                    #adivinadas, incorrectas = verificar_letra(letra, actual_word, adivinadas, incorrectas)
+                    if letra in adivinadas or letra in incorrectas: # Verifica si la letra fue usada antes
+                        mensaje = f"La letra '{letra}' ya fue utilizada. Intente con otra." # Si fue utilizada antes mostramos el mensaje para que se sepa
+                    else:
+                        adivinadas, incorrectas = verificar_letra(letra, actual_word, adivinadas, incorrectas) # Si no fue utilizada el mensaje no se muestra y verificamos si la letra esta en la palabra
+                        mensaje = ""  # limpiar mensaje si la letra fue válida
                     # 4.e- Verificar condiciones de fin (victoria o derrota)
-                    if len(incorrectas) > 6:
+                    if len(incorrectas) > 6: # Cuando se superan los 6 errores, perdes
                         VENTANA.fill(NEGRO) # Pantalla en negro para mostrar el mensaje que perdiste
                         
-                        imagen_perdedor = cargar_imagen('you_died.png')
-                        cargar_musica('risa_bruja_perdedor.mp3')
-                        img_perdedor_escalada = transform.scale(imagen_perdedor, (700, 200))
-                        rect = img_perdedor_escalada.get_rect(center=(ANCHO // 2, ALTO // 2))
+                        imagen_perdedor = cargar_imagen('you_died.png') # Cargamos la imagen que avisa que perdiste
+                        cargar_musica('risa_bruja_perdedor.mp3') # Reproducimos el sonido del perdedor
+                        img_perdedor_escalada = transform.scale(imagen_perdedor, (700, 200)) # Reescalamos la imagen para que entre bien en la pantall
+                        rect = img_perdedor_escalada.get_rect(center=(ANCHO // 2, ALTO // 2)) # Creamos una superficie donde se va a mostrar la imagen 
                         
                         VENTANA.blit(img_perdedor_escalada, rect)
                         display.update()
                         
-                        sleep(6)
+                        sleep(6) # Agregamos tiempo de espera antes de que se actualice la pantalla asi da teiempo al audio a reproducirse
                         
                         corriendo = False
 
@@ -223,12 +227,12 @@ def jugar():
                         imagen_ganador = cargar_imagen('Respect.png') # Cargamos la imagen en una variable
                         cargar_musica('respect.mp3') # Cargamos musica ganadora
                         img_ganador_escalada = transform.scale(imagen_ganador,(400, 300))
-                        rect = img_ganador_escalada.get_rect(center=(ANCHO // 2, ALTO // 2)) # Centramos la imagen en el medio de la pantalla
+                        rect = img_ganador_escalada.get_rect(center=(ANCHO // 2, ALTO // 2)) # Armamos un rectangulo donde mostrar la imagen y la centramos para que quede en el medio de la pantalla
                         
                         VENTANA.blit(img_ganador_escalada, rect) # Bliteamos la imagen en pantalla
                         display.update() # Actualizamos la pantalla
                         
-                        sleep(7.5) # Contador de 7,5 segundos (duracion de la musiquiuta) antes de que se actualice otra vez la pantalla
+                        sleep(7.5) # Agregamos tiempo de espera antes de que se actualice la pantalla asi da teiempo al audio a reproducirse
                         
                         corriendo = False
 
@@ -242,11 +246,14 @@ def jugar():
                         if errores <= 5:
                             imagen, rect = dibujar_cuerpo(errores, IMAGENES) # Bliteamos la imagen del cuerpo del personaje que corresponde
                             VENTANA.blit(imagen, rect)
-                            errores += 1 # sumamos un error si la letra no está en la palabra
-                            sonido_error.play() #Reproducimos el sonido de error # 4.c- Incrementar errores si corresponde
+                            errores += 1 # sumamos un error si la letra no está en la palabra # 4.c- Incrementar errores si corresponde
 
         mostrar_letras_adivinadas(VENTANA, actual_word, adivinadas)
 
+        if mensaje:
+            texto = FUENTE_REPETIDA.render(mensaje, True, (ROJO))  # Color rojo
+            rect = texto.get_rect(center=(ANCHO // 2, ALTO - 50))  # Abajo en el centro
+            VENTANA.blit(texto, rect)
         # 4.f- Actualizar pantalla
         display.update()
 
