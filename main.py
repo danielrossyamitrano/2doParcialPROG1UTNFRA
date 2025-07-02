@@ -75,11 +75,10 @@ def mostrar_letras_adivinadas(pantalla, palabra_original, letras_adivinadas):
     ancho_total = cantidad_letras * espacio_entre_letras  # Calculamos el ancho de toda la palabra
     x_inicio = (ANCHO - ancho_total) // 2  # Centramos la palabra en pantalla
 
-    for i, letra in enumerate(
-            palabra_original):  # Recorremos la palabra original y sacamos el indice y la letra con enumerate
+    for i, letra in enumerate(palabra_original):
+        # Recorremos la palabra original y sacamos el indice y la letra con enumerate
         x = x_inicio + i * espacio_entre_letras  # Calculamos la posicion en x de cada letra
-    for i, letra in enumerate(palabra_original): # Recorremos la palabra original y sacamos el indice y la letra con enumerate
-        x = x_inicio + i * espacio_entre_letras # Calculamos la posicion en x de cada letra # x_inicio es el inicio de la palabra y i * espacio_entre_letras es el espacio entre cada letra
+        # x_inicio es el inicio de la palabra y i * espacio_entre_letras es el espacio entre cada letra
 
         draw.line(pantalla, BLANCO, (x, y_linea), (x + 40, y_linea), 3)  # Dibujamos la linea de cada letra
 
@@ -91,8 +90,8 @@ def mostrar_letras_adivinadas(pantalla, palabra_original, letras_adivinadas):
             letra_normalizada = letra_normalizada.replace(*doble)  # Eliminamos las letras dobles por la misma razon
 
         if letra_normalizada in letras_adivinadas:  # Si esta la letra en las letras adivinadas
-            texto = FUENTE.render(letra.upper(), True,
-                                  BLANCO)  # Convertimos la letra a mayuscula y la mostramos en pantalla
+            texto = FUENTE.render(letra.upper(), True, BLANCO)
+            # Convertimos la letra a mayuscula y la mostramos en pantalla
             rect = texto.get_rect(center=(x + 20, y_texto))  # Acomodamos la letra sobre la linea
             pantalla.blit(texto, rect)
 
@@ -138,8 +137,8 @@ IMAGENES = [  # Reescalamos las imageens de gaturro y guardamos en un diccionari
 # ------------------ FUNCION PRINCIPAL -------------------
 
 def jugar():
-    fondo = cargar_imagen('fondo_final.png') # Cargamos la imagen para el fondo del juego
-    fondo_escalado = transform.scale(fondo, [800, 600]) # Escalamos la imagen al tamaño de la ventana
+    fondo = cargar_imagen('fondo_final.png')  # Cargamos la imagen para el fondo del juego
+    fondo_escalado = transform.scale(fondo, [800, 600])  # Escalamos la imagen al tamaño de la ventana
     VENTANA.blit(fondo_escalado, (0, 0))
 
     cargar_musica('MusicaFondo.wav')  # Cargamos la musica de fondo
