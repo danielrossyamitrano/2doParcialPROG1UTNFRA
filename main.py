@@ -78,6 +78,8 @@ def mostrar_letras_adivinadas(pantalla, palabra_original, letras_adivinadas):
     for i, letra in enumerate(
             palabra_original):  # Recorremos la palabra original y sacamos el indice y la letra con enumerate
         x = x_inicio + i * espacio_entre_letras  # Calculamos la posicion en x de cada letra
+    for i, letra in enumerate(palabra_original): # Recorremos la palabra original y sacamos el indice y la letra con enumerate
+        x = x_inicio + i * espacio_entre_letras # Calculamos la posicion en x de cada letra # x_inicio es el inicio de la palabra y i * espacio_entre_letras es el espacio entre cada letra
 
         draw.line(pantalla, BLANCO, (x, y_linea), (x + 40, y_linea), 3)  # Dibujamos la linea de cada letra
 
@@ -136,8 +138,8 @@ IMAGENES = [  # Reescalamos las imageens de gaturro y guardamos en un diccionari
 # ------------------ FUNCION PRINCIPAL -------------------
 
 def jugar():
-    fondo = cargar_imagen('FondoFinal.png')  # Cargamos la imagen para el fondo del juego
-    fondo_escalado = transform.scale(fondo, [800, 600])  # Escalamos la imagen al tamaño de la ventana
+    fondo = cargar_imagen('fondo_final.png') # Cargamos la imagen para el fondo del juego
+    fondo_escalado = transform.scale(fondo, [800, 600]) # Escalamos la imagen al tamaño de la ventana
     VENTANA.blit(fondo_escalado, (0, 0))
 
     cargar_musica('MusicaFondo.wav')  # Cargamos la musica de fondo
@@ -240,7 +242,8 @@ def jugar():
                                 errores += 1
                                 # sumamos un error si la letra no está en la palabra
 
-        mostrar_letras_adivinadas(VENTANA, actual_word, adivinadas)
+        mostrar_letras_adivinadas(VENTANA, elegida, adivinadas)
+
         if mensaje:
             texto = FUENTE_REPETIDA.render(mensaje, True, ROJO)  # Color rojo
             rect = texto.get_rect(center=(ANCHO // 2, ALTO - 50))  # Abajo en el centro
