@@ -45,10 +45,6 @@ VERDE = (0, 255, 0)
 FUENTE = font.SysFont('Century', 48)
 FUENTE_REPETIDA = font.SysFont('Century', 24)  # Fuente para mensajes repetidos
 
-#-------------------Modelo de funciones, se deberan realizar en un archivo aparte
-# Las funciones del personaje deben ser creadas y completadas por el equipo en un archivo aparte
-# -------------------
-
 # ----------------- ELEGIR PALABRA AL AZAR -----------------
 
 def elegir_palabra(lista_palabras):
@@ -74,7 +70,7 @@ def mostrar_letras_adivinadas(pantalla, palabra_original, letras_adivinadas):
     x_inicio = (ANCHO - ancho_total) // 2 # Centramos la palabra en pantalla 
 
     for i, letra in enumerate(palabra_original): # Recorremos la palabra original y sacamos el indice y la letra con enumerate
-        x = x_inicio + i * espacio_entre_letras # Calculamos la posicion en x de cada letra
+        x = x_inicio + i * espacio_entre_letras # Calculamos la posicion en x de cada letra # x_inicio es el inicio de la palabra y i * espacio_entre_letras es el espacio entre cada letra
 
         draw.line(pantalla, BLANCO, (x, y_linea), (x + 40, y_linea), 3) # Dibujamos la linea de cada letra
 
@@ -130,7 +126,7 @@ IMAGENES = [ # Reescalamos las imageens de gaturro y guardamos en un diccionario
 # ------------------ FUNCION PRINCIPAL -------------------
 
 def jugar():
-    fondo = cargar_imagen('FondoFinal.png') # Cargamos la imagen para el fondo del juego
+    fondo = cargar_imagen('fondo_final.png') # Cargamos la imagen para el fondo del juego
     fondo_escalado = transform.scale(fondo, [800, 600]) # Escalamos la imagen al tamaño de la ventana
     VENTANA.blit(fondo_escalado, (0, 0))
 
@@ -217,7 +213,7 @@ def jugar():
                             VENTANA.blit(imagen, rect)
                             errores += 1 # sumamos un error si la letra no está en la palabra # 4.c- Incrementar errores si corresponde
 
-        mostrar_letras_adivinadas(VENTANA, actual_word, adivinadas)
+        mostrar_letras_adivinadas(VENTANA, elegida, adivinadas)
 
         if mensaje:
             texto = FUENTE_REPETIDA.render(mensaje, True, (ROJO))  # Color rojo
