@@ -102,7 +102,37 @@ def dibujar_lineas(pantalla, palabra_elegida: str):
         x = x_inicio + i * espacio_entre_lineas
         draw.line(fondo_palabra, BLANCO, (x, 100), (x + largo_linea, 100), 4)
 
-    pantalla.blit(fondo_palabra, (30, 440))  # Posición en pantalla
+    pantalla.blit(fondo_palabra, (30, 440))
+    
+def mostrar_letras_adivinadas(pantalla, palabra_original, letras_adivinadas):
+    cantidad_letras = len(palabra_original)
+    espacio_entre_letras = 60
+    y_linea = 530  # Altura de la línea base
+    y_texto = 500  # Altura de la letra (un poco más arriba)
+
+    ancho_total = cantidad_letras * espacio_entre_letras
+    x_inicio = (ANCHO - ancho_total) // 2
+
+    for i, letra in enumerate(palabra_original):
+        x = x_inicio + i * espacio_entre_letras
+
+        # 1. Dibujar la línea base
+        inicio_linea = (x, y_linea)
+        fin_linea = (x + 40, y_linea)  # Línea de 40 píxeles de largo
+        draw.line(pantalla, BLANCO, inicio_linea, fin_linea, 3)
+
+        # 2. Normalizar la letra para comparación
+        letra_normalizada = letra.lower()
+        for tilde, sin_tilde in (('í','i'), ('ó','o'), ('á','a'), ('ú','u'), ('é','e')):
+            letra_normalizada = letra_normalizada.replace(tilde, sin_tilde)
+        for doble in (('rr','r'), ('ll','l'), ('cc','c')):
+            letra_normalizada = letra_normalizada.replace(*doble)
+
+        # 3. Si fue adivinada, dibujar la letra sobre la línea
+        if letra_normalizada in letras_adivinadas:
+            texto = FUENTE.render(letra.upper(), True, BLANCO)
+            rect = texto.get_rect(center=(x + 20, y_texto))  # x + 20 centra la letra sobre la línea
+            pantalla.blit(texto, rect)
 
 
 # ----------------- VERIFICAR LETRA -----------------
@@ -144,6 +174,8 @@ def agregar_letra(letra: str, palabra: str):
 
 # ----------------- BUCLE PRINCIPAL -----------------
 
+# ----------------- REESCALADO DE PARTES DEL CUERPO GATURRO -----------------
+
 IMAGENES = [
     {'imagen': transform.scale(cargar_imagen('Cabeza_4.png'), [100, 100]), 'rect': [350, 200]},
     {'imagen': transform.scale(cargar_imagen('Torso_5.png'), [100, 100]), 'rect': [350, 201]},
@@ -155,26 +187,26 @@ IMAGENES = [
 
 
 def jugar():
-    fondo = cargar_imagen('FondoFinal.png')
-    fondo_escalado = transform.scale(fondo, [800, 600])
+    fondo = cargar_imagen('FondoFinal.png') # Cargamos la imagen para el fondo del juego
+    fondo_escalado = transform.scale(fondo, [800, 600]) # Escalamos la imagen al tamaño de la ventana
     VENTANA.blit(fondo_escalado, (0, 0))
 
-    cargar_musica('MusicaFondo.wav')
+    cargar_musica('MusicaFondo.wav') # Cargamos la musica de fondo
 
     # 1. Cargar palabras desde archivo y elegir una al azar
-    palabras = cargar_palabras(path.join(getcwd(), 'data', 'palabras_programacion.txt'))
-    elegida = choice(palabras)
-    espacios = len(elegida)
+    palabras = cargar_palabras(path.join(getcwd(), 'data', 'palabras_programacion.txt')) # Cargamos las palabras desde un archivo .txt
+    elegida = choice(palabras) # Se elige una palabra al azar de esta lista de palabras
+    espacios = len(elegida) # Crea una lista con los espacios que tiene la palabra elegida
     # 2. Inicializar estructuras necesarias: letras_adivinadas, errores, reloj, banderas
-    adivinadas = []
-    incorrectas = []
-    errores = 0
+    adivinadas = [] # Lista de letras adivinadas
+    incorrectas = [] # Lista de letras incorrectas
+    errores = 0 # Contador de errores
 
     for pair in ('í', 'i'), ('ó', 'o'), ('á', 'a'), ('ú', 'u'), ('é', 'e'):
         # reemplaza las vocales con tílde porque en Pygame esos son dos teclas y requeriría un parser.
         actual_word = elegida.replace(*pair)
 
-    # esto es porque al adivinar una letra se ocuan todos los epsacios que tienen la misma letra. Ademas, case sensitive
+    # esto es porque al adivinar una letra se ocupan todos los espacios que tienen la misma letra. Ademas, case sensitive
     actual_word = actual_word.replace('rr', 'r').replace('cc', 'c').replace('ll', 'l').lower()
     corriendo = True
     #dibujar_lineas(VENTANA, elegida)
@@ -197,8 +229,19 @@ def jugar():
                         sleep(3)
                         corriendo = False
 
-                    elif adivinadas == espacios:
-                        print('Ganaste')
+                    elif set(actual_word) <= set(adivinadas): # Usamos set para verificar que todas las letras de la palabra fueron adivinadas, el set hace que no importe el orden de las letras y elimina las repetidas
+                        VENTANA.fill(NEGRO) # Pantalla en negro para poner el mensaje ganador
+                        
+                        imagen_ganador = cargar_imagen('Respect.png') # Cargamos la imagen en una variable
+                        cargar_musica('respect.mp3') # Cargamos musica ganadora
+                        img_ganador_escalada = transform.scale(imagen_ganador,(400, 300))
+                        rect = img_ganador_escalada.get_rect(center=(ANCHO // 2, ALTO // 2)) # Centramos la imagen en el medio de la pantalla
+                        
+                        VENTANA.blit(img_ganador_escalada, rect) # Bliteamos la imagen en pantalla
+                        display.update() # Actualizamos la pantalla
+                        
+                        sleep(6) # Contador de 6 segundos (duracion de la musiquiuta) antes de que se actualice otra vez la pantalla
+                        
                         corriendo = False
 
                     # 4.d- Dibujar estado del juego en pantalla
@@ -213,6 +256,7 @@ def jugar():
                             VENTANA.blit(imagen, rect)
                             errores += 1  # 4.c- Incrementar errores si corresponde
 
+        mostrar_letras_adivinadas(VENTANA, elegida, adivinadas)
         # 4.f- Actualizar pantalla
         display.update()
 
