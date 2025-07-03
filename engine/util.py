@@ -1,10 +1,10 @@
-from pygame import image, mixer, quit
-from pygame.mixer import music
+from pygame import image, mixer, quit, Surface
+from pygame.mixer import music, Sound
 from os import path, getcwd
 from sys import exit
 
 
-def abrir_txt(filename):
+def abrir_txt(filename:str) -> list:
     filepath = path.join(getcwd(), 'data', 'palabras', filename)  # cra un string con la ruta al archivo
     if path.exists(filepath):  # verifica que la ruta exista.
         with open(filepath, 'rt', encoding='utf-8') as file:
@@ -12,14 +12,14 @@ def abrir_txt(filename):
         return lineas
 
 
-def cargar_imagen(filename):
+def cargar_imagen(filename:str) -> Surface:
     filepath = path.join(getcwd(), 'data', 'imagenes', filename)  # cra un string con la ruta al archivo
     if path.exists(filepath):  # verifica que la ruta exista.
         imagen = image.load(filepath).convert_alpha()
         return imagen
 
 
-def cargar_musica(filename):
+def cargar_musica(filename:str) -> None:
     mixer.init()
     filepath = path.join(getcwd(), 'data', 'audio', 'musica', filename)  # cra un string con la ruta al archivo
     if path.exists(filepath):  # verifica que la ruta exista.
@@ -28,21 +28,21 @@ def cargar_musica(filename):
     music.play(-1)  # comienza a reproducir la canción, con un loop infinito.
 
 
-def cargar_sonidos(filename):
+def cargar_sonidos(filename:str) -> Sound:
     filepath = path.join(getcwd(), 'data', 'audio', 'sounds', filename)  # cra un string con la ruta al archivo
     if path.exists(filepath):  # verifica que la ruta exista.
-        sonido = mixer.Sound(filepath)  # inicializa el sonido
+        sonido = Sound(filepath)  # inicializa el sonido
         sonido.set_volume(0.3)  # Bajamos el volumen del sonido porque el audio original es muy fuerte)
         return sonido  # devolvmeos el sonido
 
 
-def salir():
+def salir() -> None:
     # unifica las funciones de para salir del programa.
     quit()
     exit()
 
 
-def detener_musica():
+def detener_musica() -> None:
     music.stop()
 
 

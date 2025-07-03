@@ -1,7 +1,7 @@
 # ----------------- VERIFICAR LETRA -----------------
 from .constantes import sonido_error, sonido_correcto
 
-def verificar_letra(letra: str, palabra: str, letras_adivinadas: list, letras_incorrectas: list):
+def verificar_letra(letra: str, palabra: str, letras_adivinadas: list, letras_incorrectas: list) -> list:
     if not (letra in letras_adivinadas and letra in letras_incorrectas):  # Verificamos si la letra ya no fue utilizada
         # mensaje_repetida = f"La letra '{letra}' ya fue utilizada"  # Mensaje si es que ya fue utilizada
         # return letras_adivinadas, letras_incorrectas, mensaje_repetida  #

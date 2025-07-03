@@ -14,7 +14,7 @@
 from engine import agregar_letra, dibujar_cuerpo, elegir_palabra, mostrar_letras_adivinadas, verificar_letra
 from engine import abrir_txt as cargar_palabras, cargar_imagen, cargar_musica, salir, detener_musica
 from engine.constantes import ANCHO, ALTO, NEGRO, FUENTE_REPETIDA, ROJO, risa, win
-from pygame import init as pg_init, display, event, time, transform
+from pygame import init as pg_init, display, event, time, transform, Surface
 from pygame.locals import *
 from time import sleep
 from os import path
@@ -23,7 +23,7 @@ pg_init()
 
 
 # ------------------ FUNCION PRINCIPAL -------------------
-def jugar(pantalla):
+def jugar(pantalla: Surface) -> None:
     imagen_fondo = cargar_imagen('fondo_final.png')  # Cargamos la imagen para el fondo del juego
     fondo_escalado = transform.scale(imagen_fondo, [800, 600])  # Escalamos la imagen al tamaño de la ventana
     pantalla.blit(fondo_escalado, (0, 0))
