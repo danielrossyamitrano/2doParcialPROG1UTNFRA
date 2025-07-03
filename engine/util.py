@@ -4,7 +4,7 @@ from os import path, getcwd
 from sys import exit
 
 
-def abrir_txt(filename:str) -> list:
+def abrir_txt(filename: str) -> list:
     filepath = path.join(getcwd(), 'data', 'palabras', filename)  # cra un string con la ruta al archivo
     if path.exists(filepath):  # verifica que la ruta exista.
         with open(filepath, 'rt', encoding='utf-8') as file:
@@ -12,14 +12,14 @@ def abrir_txt(filename:str) -> list:
         return lineas
 
 
-def cargar_imagen(filename:str) -> Surface:
+def cargar_imagen(filename: str) -> Surface:
     filepath = path.join(getcwd(), 'data', 'imagenes', filename)  # cra un string con la ruta al archivo
     if path.exists(filepath):  # verifica que la ruta exista.
         imagen = image.load(filepath).convert_alpha()
         return imagen
 
 
-def cargar_musica(filename:str) -> None:
+def cargar_musica(filename: str) -> None:
     mixer.init()
     filepath = path.join(getcwd(), 'data', 'audio', 'musica', filename)  # cra un string con la ruta al archivo
     if path.exists(filepath):  # verifica que la ruta exista.
@@ -28,7 +28,7 @@ def cargar_musica(filename:str) -> None:
     music.play(-1)  # comienza a reproducir la canción, con un loop infinito.
 
 
-def cargar_sonidos(filename:str) -> Sound:
+def cargar_sonidos(filename: str) -> Sound:
     filepath = path.join(getcwd(), 'data', 'audio', 'sounds', filename)  # cra un string con la ruta al archivo
     if path.exists(filepath):  # verifica que la ruta exista.
         sonido = Sound(filepath)  # inicializa el sonido

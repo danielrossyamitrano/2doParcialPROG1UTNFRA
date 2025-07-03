@@ -1,8 +1,10 @@
 from .constantes import ANCHO, BLANCO, FUENTE
 from pygame import draw, Surface
+
+
 # ----------------- DIBUJAR LINEAS Y LETRAS EN PANTALLA -----------------
 
-def mostrar_letras_adivinadas(pantalla:Surface, palabra_original:str, letras_adivinadas:list) -> None:
+def mostrar_letras_adivinadas(pantalla: Surface, palabra_original: str, letras_adivinadas: list) -> None:
     cantidad_letras = len(palabra_original)
     espacio_entre_letras = 60  # Buscamos un espacion entre cada letra que se vea bien en pantalla
     y_linea = 530  # Le ponemos una altura a las lineas
